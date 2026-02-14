@@ -9,10 +9,15 @@ if (process.platform === 'win32') {
 
 const connectDB = async () => {
     try {
-        const conn = await mongoose.connect(process.env.MONGO_URI, {
-            family: 4, // Force IPv4 (fixes Windows DNS issues)
-            serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-        });
+        const clientOptions = {
+            serverSelectionTimeoutMS: 5000,
+        };
+
+        if (process.platform === 'win32') {
+            clientOptions.family = 4; // Force IPv4 only on Windows
+        }
+
+        const conn = await mongoose.connect(process.env.MONGO_URI, clientOptions);
         console.log(`✅ MongoDB Atlas Terkoneksi: ${conn.connection.host}`);
         console.log(`📂 Database: ${conn.connection.name}`);
     } catch (error) {
