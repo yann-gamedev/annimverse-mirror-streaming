@@ -8,6 +8,7 @@
     "test": "tests"
   },
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:css": "node scripts/build-css.js",
     "watch:css": "npx tailwindcss -i ./public/css/input.css -o ./public/css/tailwind.min.css --watch"
