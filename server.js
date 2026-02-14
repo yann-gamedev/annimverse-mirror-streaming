@@ -28,6 +28,7 @@ connectDB();
 
 // --- MIDDLEWARES ---
 // Security & Performance
+app.set('trust proxy', 1); // Required for Vercel/Heroku (Rate Limiting)
 app.use(helmet({
     contentSecurityPolicy: false, // Disable temporarily if it breaks inline scripts (common in simple HTML apps)
     crossOriginEmbedderPolicy: false
