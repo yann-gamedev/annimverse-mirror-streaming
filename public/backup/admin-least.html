@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - ANNIMVERSE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        // SATPAM FRONTEND
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            
+            // 1. Cek Login
+            if (!token || !userStr) {
+                alert("Anda harus login sebagai Admin!");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // 2. Cek Role (Jabatan)
+            const user = JSON.parse(userStr);
+            if (user.role !== 'admin') {
+                alert("Akses Ditolak! Halaman ini khusus Admin.");
+                window.location.href = 'menu.html';
+            }
+        });
+    </script>
+
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #050505; color: #e0e0e0; }
+        .input-dark {
+            background: #1a1a1d; border: 1px solid #333; color: white;
+            padding: 10px; rounded: 8px; width: 100%; outline: none;
+        }
+        .input-dark:focus { border-color: #8b5cf6; }
+        .btn-primary {
+            background: #8b5cf6; color: white; padding: 10px 20px; border-radius: 8px;
+            font-weight: bold; width: 100%; transition: 0.3s;
+        }
+        .btn-primary:hover { background: #7c3aed; }
+    </style>
+</head>
+<body class="p-6 pb-20 max-w-2xl mx-auto">
+
+    <nav class="flex items-center gap-4 mb-8 border-b border-gray-800 pb-4">
+        <a href="menu.html" class="text-gray-400 hover:text-white"><i data-lucide="arrow-left"></i></a>
+        <h1 class="text-2xl font-bold text-white">Admin Panel</h1>
+    </nav>
+
+    <!-- Tabs -->
+    <div class="flex gap-4 mb-6">
+        <button onclick="switchTab('anime')" id="tab-anime" class="flex-1 py-2 rounded bg-violet-600 text-white font-bold">Tambah Anime</button>
+        <button onclick="switchTab('episode')" id="tab-episode" class="flex-1 py-2 rounded bg-gray-800 text-gray-400">Tambah Episode</button>
+    </div>
+
+    <!-- FORM 1: TAMBAH ANIME -->
+    <div id="form-anime" class="space-y-4">
+        <h2 class="text-xl font-bold text-violet-400 mb-4">Data Anime Baru</h2>
+        
+        <input type="text" id="a-title" placeholder="Judul Anime (Ex: One Piece)" class="input-dark">
+        <input type="text" id="a-slug" placeholder="Slug URL (Ex: one-piece)" class="input-dark">
+        <textarea id="a-synopsis" placeholder="Sinopsis..." class="input-dark h-24"></textarea>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <input type="text" id="a-genres" placeholder="Genre (Pisah koma)" class="input-dark">
+            <input type="text" id="a-year" placeholder="Tahun Rilis" class="input-dark">
+            <input type="text" id="a-rating" placeholder="Rating (0-10)" class="input-dark">
+            <input type="text" id="a-status" placeholder="Status (Ongoing/Completed)" class="input-dark">
+        </div>
+
+        <input type="text" id="a-poster" placeholder="Link Poster / Path Storage" class="input-dark">
+        
+        <button onclick="submitAnime()" class="btn-primary">Simpan Anime</button>
+    </div>
+
+    <!-- FORM 2: TAMBAH EPISODE -->
+    <div id="form-episode" class="hidden space-y-4">
+        <h2 class="text-xl font-bold text-cyan-400 mb-4">Upload Episode</h2>
+        
+        <!-- Dropdown Anime (Otomatis ambil dari DB) -->
+        <div>
+            <label class="text-xs text-gray-500 mb-1 block">Pilih Anime</label>
+            <select id="e-anime-select" class="input-dark">
+                <option value="">Memuat daftar anime...</option>
+            </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <input type="number" id="e-number" placeholder="Episode Ke-" class="input-dark">
+            <input type="number" id="e-duration" placeholder="Durasi (Menit)" class="input-dark" value="24">
+        </div>
+
+        <input type="text" id="e-title" placeholder="Judul Episode (Opsional)" class="input-dark">
+        
+        <div class="p-4 border border-violet-500/30 rounded-lg bg-violet-500/5">
+            <label class="text-xs text-violet-300 font-bold block mb-2">GOOGLE DRIVE FILE ID</label>
+            <input type="text" id="e-gdrive" placeholder="Paste ID File di sini (Ex: 1A2B3C...)" class="input-dark border-violet-500/50">
+            <p class="text-[10px] text-gray-500 mt-2">
+                *Klik kanan video di GDrive, lalu Get Link, dan Copy ID acak di tengah URL.
+            </p>
+        </div>
+
+        <button onclick="submitEpisode()" class="btn-primary bg-cyan-600 hover:bg-cyan-700">Simpan Episode</button>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function switchTab(tab) {
+            document.getElementById('form-anime').classList.add('hidden');
+            document.getElementById('form-episode').classList.add('hidden');
+            
+            document.getElementById('tab-anime').className = "flex-1 py-2 rounded bg-gray-800 text-gray-400";
+            document.getElementById('tab-episode').className = "flex-1 py-2 rounded bg-gray-800 text-gray-400";
+
+            if (tab === 'anime') {
+                document.getElementById('form-anime').classList.remove('hidden');
+                document.getElementById('tab-anime').className = "flex-1 py-2 rounded bg-violet-600 text-white font-bold";
+            } else {
+                document.getElementById('form-episode').classList.remove('hidden');
+                document.getElementById('tab-episode').className = "flex-1 py-2 rounded bg-cyan-600 text-white font-bold";
+                loadAnimeList();
+            }
+        }
+
+        // 1. SUBMIT ANIME (DENGAN TOKEN)
+        async function submitAnime() {
+            const token = localStorage.getItem('token');
+            if (!token) return alert("Sesi habis, silakan login ulang.");
+
+            const data = {
+                title: document.getElementById('a-title').value,
+                slug: document.getElementById('a-slug').value,
+                synopsis: document.getElementById('a-synopsis').value,
+                genres: document.getElementById('a-genres').value.split(',').map(g => g.trim()),
+                releaseYear: document.getElementById('a-year').value,
+                rating: document.getElementById('a-rating').value,
+                status: document.getElementById('a-status').value,
+                posterUrl: document.getElementById('a-poster').value
+            };
+
+            try {
+                const res = await fetch('/api/anime', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // [PENTING] Kirim Token
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if(res.ok) alert("✅ Anime Berhasil Ditambahkan!");
+                else alert("❌ Gagal: " + result.message);
+            } catch (err) { alert("Error Server"); }
+        }
+
+        // 2. LOAD LIST
+        async function loadAnimeList() {
+            const select = document.getElementById('e-anime-select');
+            try {
+                const res = await fetch('/api/anime?limit=100'); 
+                const animes = await res.json();
+                select.innerHTML = '<option value="">-- Pilih Anime --</option>';
+                animes.forEach(anime => {
+                    select.innerHTML += `<option value="${anime._id}">${anime.title}</option>`;
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        // 3. SUBMIT EPISODE (DENGAN TOKEN)
+        async function submitEpisode() {
+            const token = localStorage.getItem('token');
+            if (!token) return alert("Sesi habis, silakan login ulang.");
+
+            const data = {
+                animeId: document.getElementById('e-anime-select').value,
+                episodeNumber: document.getElementById('e-number').value,
+                duration: document.getElementById('e-duration').value,
+                title: document.getElementById('e-title').value,
+                gdriveId: document.getElementById('e-gdrive').value
+            };
+
+            if(!data.animeId) return alert("Pilih anime dulu!");
+
+            try {
+                const res = await fetch('/api/anime/episode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // [PENTING] Kirim Token
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if(res.ok) alert("✅ Episode Berhasil Disimpan!");
+                else alert("❌ Gagal: " + result.message);
+            } catch (err) { alert("Error Server"); }
+        }
+    </script>
+</body>
+</html>
+
+

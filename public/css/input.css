@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom utility classes for Annimverse */
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .text-glow {
+        text-shadow: 0 0 10px var(--primary-glow, #8b5cf6);
+    }
+}
+
+@layer components {
+
+    /* Skeleton loader base */
+    .skeleton {
+        @apply bg-gray-800 rounded animate-pulse;
+    }
+
+    .skeleton-shimmer {
+        background: linear-gradient(90deg,
+                rgba(255, 255, 255, 0.03) 0%,
+                rgba(255, 255, 255, 0.08) 50%,
+                rgba(255, 255, 255, 0.03) 100%);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite;
+    }
+}

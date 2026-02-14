@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memuat... - ANNIMVERSE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/guard.js"></script>
+
+    <style>
+        :root {
+            --primary-glow: #8b5cf6;
+            --bg-dark: #050505;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e0e0e0;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(5, 5, 5, 0.2) 0%, rgba(5, 5, 5, 0.9) 60%, rgba(5, 5, 5, 1) 100%);
+        }
+
+        .btn-play {
+            background: linear-gradient(90deg, #7c3aed, #2563eb);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.4);
+            transition: 0.3s;
+        }
+
+        .btn-play:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.7);
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="pb-20 min-h-screen">
+
+    <!-- Loading Screen -->
+    <div id="loader" class="fixed inset-0 bg-[#050505] z-[9999] flex items-center justify-center">
+        <div class="flex flex-col items-center gap-3">
+            <i data-lucide="loader-2" class="w-10 h-10 text-violet-500 animate-spin"></i>
+            <span class="text-sm text-gray-500 animate-pulse">Mengambil data anime...</span>
+        </div>
+    </div>
+
+    <!-- Navbar Back -->
+    <nav class="absolute w-full z-50 top-0 p-4">
+        <a href="menu.html"
+            class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-black/50 backdrop-blur-md text-white hover:bg-white/20 transition">
+            <i data-lucide="arrow-left" class="w-6 h-6"></i>
+        </a>
+    </nav>
+
+    <!-- Content Utama -->
+    <main id="content" class="hidden">
+
+        <!-- Hero Section -->
+        <div class="relative w-full h-[55vh] lg:h-[65vh]">
+            <img id="anime-backdrop" src="" class="w-full h-full object-cover opacity-60">
+            <div class="hero-gradient absolute inset-0"></div>
+
+            <div class="absolute bottom-0 left-0 w-full px-4 pb-8 lg:px-8 flex flex-col md:flex-row gap-6 items-end">
+                <!-- Poster Kecil -->
+                <div
+                    class="hidden md:block w-48 h-72 rounded-xl overflow-hidden shadow-2xl border border-white/10 shrink-0">
+                    <img id="anime-poster" src="" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Teks Info -->
+                <div class="flex-1 w-full">
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span id="anime-status"
+                            class="bg-green-500/20 text-green-400 border border-green-500/30 px-2 py-0.5 rounded text-[10px] font-bold uppercase">...</span>
+                        <span id="anime-year"
+                            class="bg-white/10 text-gray-300 px-2 py-0.5 rounded text-[10px]">...</span>
+                        <div id="anime-genres" class="flex gap-2"></div>
+                    </div>
+
+                    <h1 id="anime-title" class="text-3xl md:text-5xl font-extrabold text-white mb-2 leading-tight">...
+                    </h1>
+
+                    <div class="flex items-center gap-4 text-sm text-gray-400 mb-4">
+                        <div class="flex items-center gap-1 text-yellow-500">
+                            <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                            <span id="anime-rating" class="font-bold">0.0</span>
+                        </div>
+                        <span id="anime-eps">0 Episodes</span>
+                    </div>
+
+                    <p id="anime-synopsis" class="text-gray-300 text-sm line-clamp-3 md:line-clamp-none mb-6 max-w-2xl">
+                        ...</p>
+
+                    <div class="flex gap-3">
+                        <a id="btn-watch" href="#"
+                            class="btn-play flex-1 md:flex-none md:w-48 py-3 rounded-full text-white font-bold flex items-center justify-center gap-2">
+                            <i data-lucide="play" class="w-5 h-5 fill-current"></i> Tonton Eps 1
+                        </a>
+
+                        <!-- TOMBOL BOOKMARK (SUDAH DIPERBAIKI) -->
+                        <button id="btn-bookmark" onclick="toggleBookmark()"
+                            class="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white hover:bg-white/10 transition group">
+                            <i data-lucide="bookmark" id="icon-bookmark"
+                                class="w-5 h-5 transition-transform group-active:scale-90"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Episode List Section -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <h2 class="text-xl font-bold text-white mb4 border-l-4 border-violet-500 pl-3">Daftar Episode</h2>
+            <div id="episode-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+        </div>
+
+        <!-- Similar Anime Section -->
+        <div class="max-w-7xl mx-auto px-4 pb-8">
+            <h2 class="text-xl font-bold text-white mb-4 border-l-4 border-cyan-500 pl-3">🔍 Anime Serupa</h2>
+            <div id="similar-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4">
+                <!-- Loading skeletons -->
+                <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+                <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+                <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        let currentAnimeId = null;
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+
+        async function loadAnimeDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+
+            if (!slug) { window.location.href = 'menu.html'; return; }
+
+            try {
+                // 1. Ambil Detail Anime
+                const resAnime = await fetch(`/api/anime/${slug}`);
+                if (!resAnime.ok) throw new Error('Anime tidak ditemukan');
+                const anime = await resAnime.json();
+
+                currentAnimeId = anime._id; // Simpan ID untuk bookmark
+
+                // Update UI
+                document.title = `${anime.title} - ANNIMVERSE`;
+                document.getElementById('anime-title').innerText = anime.title;
+                document.getElementById('anime-synopsis').innerText = anime.synopsis;
+                document.getElementById('anime-status').innerText = anime.status;
+                document.getElementById('anime-year').innerText = anime.releaseYear;
+                document.getElementById('anime-rating').innerText = anime.rating;
+                document.getElementById('anime-eps').innerText = `${anime.totalEpisodes || '?'} Eps`;
+                document.getElementById('anime-backdrop').src = anime.posterUrl;
+                document.getElementById('anime-poster').src = anime.posterUrl;
+
+                const genreContainer = document.getElementById('anime-genres');
+                genreContainer.innerHTML = '';
+                anime.genres.forEach(g => {
+                    genreContainer.innerHTML += `<span class="bg-white/10 text-gray-300 px-2 py-0.5 rounded text-[10px]">${g}</span>`;
+                });
+
+                document.getElementById('btn-watch').href = `watch.html?slug=${anime.slug}&eps=1`;
+
+                // 2. Cek Status Bookmark
+                checkBookmarkStatus();
+
+                // 3. Ambil Daftar Episode
+                loadEpisodes(slug);
+
+                // 4. Load Similar Anime
+                loadSimilarAnime(currentAnimeId);
+
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('content').classList.remove('hidden');
+
+            } catch (error) {
+                alert("Error: " + error.message);
+                window.location.href = 'menu.html';
+            }
+        }
+
+        async function loadEpisodes(slug) {
+            try {
+                const res = await fetch(`/api/anime/${slug}/episodes`);
+                const episodes = await res.json();
+                const container = document.getElementById('episode-list');
+
+                container.innerHTML = '';
+                if (episodes.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Episode belum tersedia.</p>';
+                    return;
+                }
+
+                episodes.forEach(ep => {
+                    container.innerHTML += `
+                        <a href="watch.html?slug=${slug}&eps=${ep.episodeNumber}" class="flex gap-4 p-3 rounded-lg bg-white/5 border border-white/5 hover:border-violet-500/50 hover:bg-white/10 transition group">
+                            <div class="w-12 h-12 bg-gray-800 rounded flex items-center justify-center text-violet-400 font-bold text-lg group-hover:bg-violet-600 group-hover:text-white transition">
+                                ${ep.episodeNumber}
+                            </div>
+                            <div class="flex flex-col justify-center">
+                                <h3 class="text-white text-sm font-bold line-clamp-1 group-hover:text-violet-300">${ep.title}</h3>
+                                <span class="text-xs text-gray-500">${ep.duration} Menit</span>
+                            </div>
+                        </a>
+                    `;
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        // --- LOGIKA BOOKMARK ---
+        async function checkBookmarkStatus() {
+            if (!user || !currentAnimeId) return;
+            try {
+                const res = await fetch(`/api/interact/bookmark/check?animeId=${currentAnimeId}&userId=${user.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                updateBookmarkUI(data.isBookmarked);
+            } catch (err) { console.error(err); }
+        }
+
+        async function toggleBookmark() {
+            if (!user) return alert("Login dulu bro!");
+            try {
+                const res = await fetch('/api/interact/bookmark', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ animeId: currentAnimeId, userId: user.id })
+                });
+                const data = await res.json();
+                if (res.ok) updateBookmarkUI(data.isBookmarked);
+            } catch (err) { alert("Gagal bookmark"); }
+        }
+
+        function updateBookmarkUI(isBookmarked) {
+            const btn = document.getElementById('btn-bookmark');
+            const icon = document.getElementById('icon-bookmark');
+
+            if (isBookmarked) {
+                btn.className = "w-12 h-12 rounded-full border flex items-center justify-center transition group bg-violet-600 border-violet-600 text-white";
+                icon.setAttribute('fill', 'currentColor');
+            } else {
+                btn.className = "w-12 h-12 rounded-full border flex items-center justify-center transition group border-white/20 text-white hover:bg-white/10";
+                icon.setAttribute('fill', 'none');
+            }
+            lucide.createIcons();
+        }
+
+        // Load similar anime based on current anime
+        async function loadSimilarAnime(animeId) {
+            if (!animeId) return;
+
+            try {
+                const response = await fetch(`/api/recommendations/similar/${animeId}`);
+                if (!response.ok) throw new Error('Failed to load similar anime');
+
+                const data = await response.json();
+                const similar = data.similar || [];
+                const container = document.getElementById('similar-list');
+
+                container.innerHTML = '';
+
+                if (similar.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm">Tidak ada anime serupa.</p>';
+                    return;
+                }
+
+                similar.forEach(anime => {
+                    const card = `
+                        <a href="detail.html?slug=${anime.slug}" class="shrink-0 w-36 group relative rounded-xl overflow-hidden aspect-[2/3] bg-gray-900 border border-white/5">
+                            <img src="${anime.posterUrl}" alt="${anime.title}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" loading="lazy">
+                            
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+                            
+                            <div class="absolute bottom-2 left-2 right-2">
+                                <h3 class="text-white text-xs font-bold truncate group-hover:text-cyan-400 transition">${anime.title}</h3>
+                                <div class="flex justify-between items-center mt-1">
+                                    <span class="text-[10px] text-gray-400">${anime.releaseYear || '-'}</span>
+                                    <span class="text-[10px] text-yellow-500 font-bold flex items-center gap-0.5">
+                                        <i data-lucide="star" class="w-2 h-2 fill-current"></i> ${anime.rating || 'N/A'}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                    container.innerHTML += card;
+                });
+
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Failed to load similar anime:', error);
+                document.getElementById('similar-list').innerHTML = '<p class="text-gray-500 text-sm">Gagal memuat anime serupa.</p>';
+            }
+        }
+
+        loadAnimeDetail();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ANNIMVERSE</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- SATPAM (GUARD) - Wajib ada di halaman member -->
+    <script src="js/guard.js"></script>
+
+    <style>
+        :root {
+            --primary-glow: #8b5cf6;
+            --secondary-glow: #06b6d4;
+            --bg-dark: #050505;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e0e0e0;
+        }
+
+        /* Search Bar Glow Animation */
+        .search-container {
+            transition: all 0.3s ease;
+        }
+
+        .search-container:focus-within {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(139, 92, 246, 0.25);
+            border-color: var(--primary-glow);
+        }
+
+        /* Quick Menu Icons */
+        .quick-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
+        }
+
+        .quick-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Hide Scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+
+<body class="pb-24">
+
+    <!-- Top Bar -->
+    <nav class="flex justify-between items-center px-6 py-5">
+        <div class="flex items-center gap-2">
+            <i data-lucide="play-circle" class="text-violet-500 w-6 h-6"></i>
+            <span class="font-bold text-lg tracking-wider text-white">ANNIM<span
+                    class="text-violet-500">VERSE</span></span>
+        </div>
+        <!-- User Avatar (Logout saat diklik) -->
+        <div class="relative group cursor-pointer" onclick="logout()">
+            <img id="userAvatar" src="https://ui-avatars.com/api/?name=User&background=random"
+                class="w-10 h-10 rounded-full border-2 border-[#1a1a1d] group-hover:border-red-500 transition">
+            <div class="absolute top-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#050505]"></div>
+        </div>
+    </nav>
+
+    <!-- Welcome & Search Section -->
+    <section class="px-6 mt-4 mb-6 text-center">
+        <p class="text-gray-400 text-sm mb-1">Selamat datang kembali,</p>
+        <h1 id="greetingName" class="text-2xl font-bold text-white mb-6">Wibu Elit</h1>
+
+        <!-- The Big Search Bar -->
+        <div
+            class="search-container relative w-full max-w-md mx-auto bg-[#0f0f11] border border-white/10 rounded-2xl p-1 flex items-center">
+            <div class="pl-4 pr-2 text-gray-500">
+                <i data-lucide="search" class="w-6 h-6"></i>
+            </div>
+            <input type="text" placeholder="Mau nonton apa hari ini?"
+                class="w-full bg-transparent text-white text-lg py-3 outline-none placeholder-gray-600">
+            <button class="bg-violet-600 hover:bg-violet-700 text-white p-3 rounded-xl transition">
+                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- User Stats Preview Card -->
+    <section class="px-6 mb-8">
+        <div
+            class="bg-gradient-to-br from-violet-600/10 to-cyan-600/10 border border-white/10 rounded-2xl p-5 backdrop-blur-sm">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-violet-600/20 flex items-center justify-center">
+                        <i data-lucide="crown" class="w-6 h-6 text-violet-400"></i>
+                    </div>
+                    <div>
+                        <p id="user-level-display" class="text-white font-bold text-lg">Level 1</p>
+                        <p class="text-gray-400 text-xs">Wibu Pemula</p>
+                    </div>
+                </div>
+                <a href="profile.html"
+                    class="text-violet-400 hover:text-white text-xs font-semibold flex items-center gap-1">
+                    Lihat Detail <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div class="bg-black/20 backdrop-blur-sm rounded-xl p-3 text-center border border-white/5">
+                    <p id="user-xp-display" class="text-xl font-bold text-white">0</p>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider mt-1">XP</p>
+                </div>
+                <div class="bg-black/20 backdrop-blur-sm rounded-xl p-3 text-center border border-white/5">
+                    <div class="flex items-center justify-center gap-1">
+                        <i data-lucide="flame" class="w-5 h-5 text-orange-500 fill-orange-500"></i>
+                        <p id="user-streak-display" class="text-xl font-bold text-orange-400">0</p>
+                    </div>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider mt-1">Streak</p>
+                </div>
+                <div class="bg-black/20 backdrop-blur-sm rounded-xl p-3 text-center border border-white/5">
+                    <p id="user-watchtime-display" class="text-xl font-bold text-cyan-400">0</p>
+                    <p class="text-[10px] text-gray-400 uppercase tracking-wider mt-1">Menit</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Access Grid -->
+    <section class="px-6 mb-8">
+        <h2 class="text-sm font-bold text-gray-500 mb-4 uppercase tracking-wider">Menu Cepat</h2>
+        <div class="grid grid-cols-4 gap-3 max-w-md mx-auto">
+
+            <!-- History -->
+            <a href="profile.html" class="flex flex-col items-center gap-2">
+                <div
+                    class="quick-btn w-14 h-14 rounded-2xl flex items-center justify-center text-orange-400 hover:bg-orange-500/10 hover:border-orange-500/50">
+                    <i data-lucide="history" class="w-6 h-6"></i>
+                </div>
+                <span class="text-xs text-gray-400">History</span>
+            </a>
+
+            <!-- Library -->
+            <a href="anime.html" class="flex flex-col items-center gap-2">
+                <div
+                    class="quick-btn w-14 h-14 rounded-2xl flex items-center justify-center text-violet-400 hover:bg-violet-500/10 hover:border-violet-500/50">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                </div>
+                <span class="text-xs text-gray-400">Library</span>
+            </a>
+
+            <!-- Achievements (Updated Link) -->
+            <a href="achievements.html" class="flex flex-col items-center gap-2">
+                <div
+                    class="quick-btn w-14 h-14 rounded-2xl flex items-center justify-center text-yellow-400 hover:bg-yellow-500/10 hover:border-yellow-500/50">
+                    <i data-lucide="trophy" class="w-6 h-6"></i>
+                </div>
+                <span class="text-xs text-gray-400">Trophies</span>
+            </a>
+
+            <!-- Request -->
+            <a href="request.html" class="flex flex-col items-center gap-2">
+                <div
+                    class="quick-btn w-14 h-14 rounded-2xl flex items-center justify-center text-pink-400 hover:bg-pink-500/10 hover:border-pink-500/50">
+                    <i data-lucide="message-square-plus" class="w-6 h-6"></i>
+                </div>
+                <span class="text-xs text-gray-400">Request</span>
+            </a>
+
+        </div>
+    </section>
+
+    <!-- Continue Watching Section (Dynamic from History) -->
+    <section class="pl-6 mb-8">
+        <div class="flex justify-between items-center pr-6 mb-4">
+            <h2 class="text-lg font-bold text-white">Lanjut Nonton</h2>
+            <a href="profile.html" class="text-xs text-violet-400 hover:text-white">Lihat Semua</a>
+        </div>
+
+        <!-- Horizontal Scroll Container -->
+        <div id="continue-watching-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 pr-6 min-h-[200px]">
+            <!-- Loading Skeletons -->
+            <div class="shrink-0 w-64 h-36 bg-white/5 rounded-xl animate-pulse"></div>
+            <div class="shrink-0 w-64 h-36 bg-white/5 rounded-xl animate-pulse"></div>
+        </div>
+    </section>
+
+    <!-- Trending This Week -->
+    <section class="pl-6 mb-8">
+        <div class="flex justify-between items-center pr-6 mb-4">
+            <div class="flex items-center gap-2">
+                <i data-lucide="trending-up" class="w-5 h-5 text-orange-500"></i>
+                <h2 class="text-lg font-bold text-white">Trending Minggu Ini</h2>
+            </div>
+            <a href="anime.html" class="text-xs text-violet-400 hover:text-white">Lihat Semua</a>
+        </div>
+
+        <div id="trending-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 pr-6 min-h-[230px]">
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+        </div>
+    </section>
+
+    <!-- Recently Added -->
+    <section class="pl-6 mb-8">
+        <div class="flex justify-between items-center pr-6 mb-4">
+            <div class="flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-5 h-5 text-cyan-400"></i>
+                <h2 class="text-lg font-bold text-white">Baru Ditambahkan</h2>
+            </div>
+            <a href="anime.html" class="text-xs text-violet-400 hover:text-white">Lihat Semua</a>
+        </div>
+
+        <div id="recent-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 pr-6 min-h-[230px]">
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+        </div>
+    </section>
+
+    <!-- Recommendations Slider (Data from API) -->
+    <section class="pl-6 mb-4">
+        <div class="flex justify-between items-center pr-6 mb-4">
+            <h2 class="text-lg font-bold text-white">Rekomendasi Untukmu</h2>
+            <a href="anime.html" class="text-xs text-violet-400 hover:text-white">Lihat Semua</a>
+        </div>
+
+        <!-- Horizontal Scroll Container -->
+        <div id="recommendation-list" class="flex gap-4 overflow-x-auto no-scrollbar pb-4 pr-6 min-h-[230px]">
+
+            <!-- Loading Skeletons (Akan hilang saat data masuk) -->
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+            <div class="shrink-0 w-36 aspect-[2/3] bg-white/5 rounded-xl animate-pulse"></div>
+
+        </div>
+    </section>
+
+    <!-- Bottom Nav (Sticky) -->
+    <div class="fixed bottom-0 w-full bg-[#050505]/90 backdrop-blur-lg border-t border-white/10 z-50">
+        <div class="flex justify-around items-center py-3">
+            <a href="#" class="flex flex-col items-center gap-1 text-violet-500">
+                <i data-lucide="layout-grid" class="w-5 h-5"></i>
+                <span class="text-[10px] font-bold">Dashboard</span>
+            </a>
+            <a href="anime.html" class="flex flex-col items-center gap-1 text-gray-500 hover:text-violet-400">
+                <i data-lucide="compass" class="w-5 h-5"></i>
+                <span class="text-[10px]">Explore</span>
+            </a>
+            <a href="profile.html" class="flex flex-col items-center gap-1 text-gray-500 hover:text-violet-400">
+                <i data-lucide="user" class="w-5 h-5"></i>
+                <span class="text-[10px]">Profile</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+    <script>
+        // Inisialisasi Icon Lucide awal
+        lucide.createIcons();
+
+        // 1. Ambil data User dari LocalStorage (Logic Sapaan)
+        const userData = localStorage.getItem('user');
+
+        if (userData) {
+            const user = JSON.parse(userData);
+
+            // Update Nama
+            const nameEl = document.getElementById('greetingName');
+            if (nameEl) nameEl.innerText = user.username;
+
+            // Update Avatar
+            if (user.avatar) {
+                // Gunakan UI-Avatars sementara agar konsisten
+                const avatarEl = document.getElementById('userAvatar');
+                if (avatarEl) avatarEl.src = `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`;
+            }
+
+            // Load user stats for preview card
+            loadUserStats(user.id);
+        }
+
+        // Function to load user stats
+        async function loadUserStats(userId) {
+            try {
+                const response = await fetch(`/api/users/${userId}`);
+                const user = await response.json();
+
+                document.getElementById('user-level-display').innerText = `Level ${user.stats?.level || 1}`;
+                document.getElementById('user-xp-display').innerText = user.stats?.xp || 0;
+                document.getElementById('user-streak-display').innerText = user.stats?.currentStreak || 0;
+                document.getElementById('user-watchtime-display').innerText = user.stats?.totalWatchTime || 0;
+
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Failed to load user stats:', error);
+            }
+        }
+
+        // 2. Fetch Data Anime dari Backend (Logic Rekomendasi)
+        async function loadRecommendations() {
+            try {
+                // 3. Check LocalStorage Cache
+                const CACHE_KEY = `rec_cache_${user ? user.id : 'guest'}`;
+                const cachedData = localStorage.getItem(CACHE_KEY);
+                const CACHE_DURATION = 60 * 60 * 1000; // 1 Hour
+
+                if (cachedData) {
+                    const parsed = JSON.parse(cachedData);
+                    if (Date.now() - parsed.timestamp < CACHE_DURATION) {
+                         renderRecommendations(parsed.data, token);
+                         return;
+                    }
+                }
+
+                if (token) {
+                    endpoint = '/api/recommendations';
+                    response = await fetch(endpoint, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                } else {
+                    endpoint = '/api/recommendations/trending';
+                    response = await fetch(endpoint);
+                }
+
+                if (!response.ok) throw new Error('Gagal mengambil data');
+
+                const data = await response.json();
+                
+                // Save to Cache
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    timestamp: Date.now(),
+                    data: data
+                }));
+
+                renderRecommendations(data, token);
+            } catch (error) {
+                console.error("Gagal memuat rekomendasi:", error);
+                const container = document.getElementById('recommendation-list');
+                container.innerHTML = '<p class="text-red-500 text-xs pl-2">Gagal memuat data server.</p>';
+            }
+        }
+
+        function renderRecommendations(data, token) {
+            const animes = data.recommendations || data.trending || [];
+            const container = document.getElementById('recommendation-list');
+
+            // Update section title based on type
+            const titleEl = container.previousElementSibling?.previousElementSibling?.querySelector('h2');
+            if (titleEl) {
+                if (token && data.basedOn) {
+                    titleEl.innerHTML = `🎯 Rekomendasi Untukmu <span class="text-xs text-gray-500 font-normal">(${data.basedOn.favoriteGenres.join(', ')})</span>`;
+                } else {
+                    titleEl.innerHTML = `🔥 Trending Anime`;
+                }
+            }
+
+            container.innerHTML = ''; // Clear loading skeleton
+
+            if (animes.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-sm pl-2">Belum ada rekomendasi.</p>';
+                return;
+            }
+
+            animes.slice(0, 10).forEach(anime => {
+                const animeCard = `
+                    <div class="shrink-0 w-36 group relative rounded-xl overflow-hidden aspect-[2/3] bg-gray-900 border border-white/5">
+                        <a href="detail.html?slug=${anime.slug}" class="block w-full h-full">
+                            <img src="${anime.posterUrl}" alt="${anime.title}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" loading="lazy">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-2 left-2 right-2">
+                                <h3 class="text-white text-xs font-bold truncate group-hover:text-violet-400 transition">${anime.title}</h3>
+                                <div class="flex justify-between items-center mt-1">
+                                    <span class="text-[10px] text-gray-400">${anime.releaseYear || '-'}</span>
+                                    <span class="text-[10px] text-yellow-500 font-bold flex items-center gap-0.5">
+                                        <i data-lucide="star" class="w-2 h-2 fill-current"></i> ${anime.rating || 'N/A'}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                        ${token ? `
+                        <button onclick="hideAnime(event, '${anime._id}')" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 hover:bg-red-500/80 text-white/50 hover:text-white flex items-center justify-center backdrop-blur-sm opacity-0 group-hover:opacity-100 transition duration-300 z-10" title="Sembunyikan">
+                            <i data-lucide="x" class="w-3 h-3"></i>
+                        </button>
+                        ` : ''}
+                    </div>
+                `;
+                container.innerHTML += animeCard;
+            });
+            lucide.createIcons();
+        }
+
+        async function hideAnime(e, animeId) {
+            e.preventDefault(); // Prevent clicking link
+            e.stopPropagation();
+            
+            if (!confirm('Sembunyikan anime ini dari rekomendasi?')) return;
+
+            try {
+                const token = localStorage.getItem('token');
+                // Optimistic UI update
+                const btn = e.currentTarget;
+                const card = btn.closest('.group');
+                card.style.opacity = '0.5';
+
+                const res = await fetch('/api/recommendations/feedback', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({ animeId, type: 'hide' })
+                });
+
+                if (res.ok) {
+                    card.remove();
+                    // Invalidate Cache
+                    const user = JSON.parse(localStorage.getItem('user'));
+                    localStorage.removeItem(`rec_cache_${user.id}`);
+                } else {
+                    card.style.opacity = '1';
+                    alert('Gagal menyembunyikan items');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error koneksi');
+            }
+        }
+
+        // Jalankan fungsi saat halaman selesai dimuat
+        loadRecommendations();
+        loadContinueWatching();
+        loadTrending();
+        loadRecent();
+
+        // Function to render anime card (reusable)
+        function renderAnimeCard(anime) {
+            return `
+                <a href="detail.html?slug=${anime.slug}" class="shrink-0 w-36 group relative rounded-xl overflow-hidden aspect-[2/3] bg-gray-900 border border-white/5">
+                    <img src="${anime.posterUrl}" alt="${anime.title}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" loading="lazy">
+                    
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent"></div>
+                    
+                    <div class="absolute bottom-2 left-2 right-2">
+                        <h3 class="text-white text-xs font-bold truncate group-hover:text-violet-400 transition">${anime.title}</h3>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="text-[10px] text-gray-400">${anime.releaseYear || '-'}</span>
+                            <span class="text-[10px] text-yellow-500 font-bold flex items-center gap-0.5">
+                                <i data-lucide="star" class="w-2 h-2 fill-current"></i> ${anime.rating || 'N/A'}
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+
+        // Load Trending Anime (by rating)
+        async function loadTrending() {
+            try {
+                const response = await fetch('/api/anime?limit=10');
+                if (!response.ok) throw new Error('Failed');
+
+                const data = await response.json();
+                const animes = Array.isArray(data) ? data : (data.animes || []);
+                const container = document.getElementById('trending-list');
+
+                container.innerHTML = '';
+
+                if (animes.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm pl-2">Belum ada data.</p>';
+                    return;
+                }
+
+                // Sort by rating (highest first)
+                const trending = animes.sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8);
+
+                trending.forEach(anime => {
+                    container.innerHTML += renderAnimeCard(anime);
+                });
+
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Failed to load trending:', error);
+                document.getElementById('trending-list').innerHTML = '<p class="text-gray-500 text-sm pl-2">Gagal memuat data.</p>';
+            }
+        }
+
+        // Load Recently Added Anime
+        async function loadRecent() {
+            try {
+                const response = await fetch('/api/anime?limit=10');
+                if (!response.ok) throw new Error('Failed');
+
+                const data = await response.json();
+                const animes = Array.isArray(data) ? data : (data.animes || []);
+                const container = document.getElementById('recent-list');
+
+                container.innerHTML = '';
+
+                if (animes.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm pl-2">Belum ada data.</p>';
+                    return;
+                }
+
+                // Get the most recently added (last 8)
+                const recent = animes.slice(0, 8);
+
+                recent.forEach(anime => {
+                    container.innerHTML += renderAnimeCard(anime);
+                });
+
+                lucide.createIcons();
+            } catch (error) {
+                console.error('Failed to load recent:', error);
+                document.getElementById('recent-list').innerHTML = '<p class="text-gray-500 text-sm pl-2">Gagal memuat data.</p>';
+            }
+        }
+
+        // [BARU] FUNGSI CONTINUE WATCHING
+        async function loadContinueWatching() {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) return; // Not logged in
+
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch(`/api/interact/history/${user.id}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) throw new Error('Failed to fetch history');
+
+                const history = await res.json();
+                const container = document.getElementById('continue-watching-list');
+
+                container.innerHTML = ''; // Clear loading skeleton
+
+                if (history.length === 0) {
+                    container.innerHTML = '<p class="text-gray-500 text-sm pl-2">Belum ada riwayat tontonan. Mulai nonton sekarang!</p>';
+                    return;
+                }
+
+                // Show last 5 watched anime (horizontal cards)
+                history.slice(0, 5).forEach(h => {
+                    const poster = h.anime.posterUrl || 'https://placehold.co/400x225';
+                    const card = `
+                        <a href="watch.html?slug=${h.anime.slug}&eps=${h.episode.episodeNumber}" 
+                           class="shrink-0 w-64 group relative rounded-xl overflow-hidden bg-[#121214] border border-white/5 hover:border-violet-500/50 transition">
+                            <div class="aspect-video relative">
+                                <img src="${poster}" alt="${h.anime.title}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110" loading="lazy">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+                                
+                                <!-- Play Icon Overlay -->
+                                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                                    <div class="w-12 h-12 rounded-full bg-violet-600 flex items-center justify-center">
+                                        <i data-lucide="play" class="w-6 h-6 text-white fill-white"></i>
+                                    </div>
+                                </div>
+                                
+                                <!-- Episode Badge -->
+                                <div class="absolute top-2 left-2 bg-black/80 backdrop-blur-sm px-2 py-1 rounded text-[10px] text-white font-bold">
+                                    EP ${h.episode.episodeNumber}
+                                </div>
+                            </div>
+                            
+                            <div class="p-3">
+                                <h3 class="text-white text-sm font-bold truncate group-hover:text-violet-400 transition">${h.anime.title}</h3>
+                                <p class="text-[11px] text-gray-500 mt-0.5">${h.episode.title || `Episode ${h.episode.episodeNumber}`}</p>
+                            </div>
+                        </a>
+                    `;
+                    container.innerHTML += card;
+                });
+
+                // Refresh icons
+                lucide.createIcons();
+
+            } catch (error) {
+                console.error('Failed to load continue watching:', error);
+                const container = document.getElementById('continue-watching-list');
+                container.innerHTML = '<p class="text-gray-500 text-sm pl-2">Gagal memuat riwayat.</p>';
+            }
+        }
+
+
+        // [BARU] FUNGSI PENCARIAN
+        function handleSearch() {
+            // Ambil input dengan selektor yang lebih spesifik agar tidak salah ambil
+            const input = document.querySelector('.search-container input');
+
+            if (!input) return; // Jaga-jaga kalau elemen tidak ketemu
+            const query = input.value.trim();
+
+            if (query) {
+                // Encode URI agar spasi aman (contoh: "One Piece" jadi "One%20Piece")
+                window.location.href = `anime.html?q=${encodeURIComponent(query)}`;
+            }
+        }
+
+        // Pasang Event Listener ke Tombol & Input Enter
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchBtn = document.querySelector('.search-container button');
+            const searchInput = document.querySelector('.search-container input');
+
+            if (searchBtn) searchBtn.onclick = handleSearch;
+
+            if (searchInput) {
+                searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') handleSearch();
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

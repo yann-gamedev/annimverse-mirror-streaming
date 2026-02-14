@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - ANNIMVERSE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        // SATPAM FRONTEND
+        document.addEventListener("DOMContentLoaded", () => {
+            const token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+
+            if (!token || !userStr) {
+                alert("Anda harus login sebagai Admin!");
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = JSON.parse(userStr);
+            if (user.role !== 'admin') {
+                alert("Akses Ditolak! Halaman ini khusus Admin.");
+                window.location.href = 'menu.html';
+            }
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #050505;
+            color: #e0e0e0;
+        }
+
+        .input-dark {
+            background: #1a1a1d;
+            border: 1px solid #333;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            width: 100%;
+            outline: none;
+        }
+
+        .input-dark:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+        }
+
+        .btn-primary {
+            background: #8b5cf6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            transition: 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #7c3aed;
+            transform: translateY(-1px);
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            color: white;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .tab-btn:not(.active) {
+            background: #1a1a1d;
+            color: #888;
+        }
+
+        .tab-btn:not(.active):hover {
+            background: #2a2a2d;
+            color: #ccc;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a1d, #0f0f11);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+
+<body class="p-6 pb-20 max-w-6xl mx-auto">
+
+    <!-- Header -->
+    <nav class="flex items-center justify-between mb-8 border-b border-gray-800 pb-4">
+        <div class="flex items-center gap-4">
+            <a href="menu.html" class="text-gray-400 hover:text-white transition">
+                <i data-lucide="arrow-left" class="w-6 h-6"></i>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-white">Admin Panel</h1>
+                <p class="text-sm text-gray-500">Kelola semua data platform</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span
+                class="text-xs bg-violet-500/20 text-violet-400 px-3 py-1 rounded-full border border-violet-500/30">ADMIN</span>
+            <a href="#" onclick="logout()"
+                class="text-red-400 hover:text-red-300 transition text-sm flex items-center gap-2">
+                <i data-lucide="log-out" class="w-4 h-4"></i> Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- Dashboard Stats -->
+    <section id="stats-section" class="mb-8">
+        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="w-5 h-5 text-cyan-500"></i> Statistik Platform
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4" id="stats-grid">
+            <!-- Loading skeleton -->
+            <div class="stat-card animate-pulse">
+                <div class="h-4 bg-gray-700 rounded w-1/2 mb-2"></div>
+                <div class="h-8 bg-gray-700 rounded w-3/4"></div>
+            </div>
+            <div class="stat-card animate-pulse">
+                <div class="h-4 bg-gray-700 rounded w-1/2 mb-2"></div>
+                <div class="h-8 bg-gray-700 rounded w-3/4"></div>
+            </div>
+            <div class="stat-card animate-pulse">
+                <div class="h-4 bg-gray-700 rounded w-1/2 mb-2"></div>
+                <div class="h-8 bg-gray-700 rounded w-3/4"></div>
+            </div>
+            <div class="stat-card animate-pulse">
+                <div class="h-4 bg-gray-700 rounded w-1/2 mb-2"></div>
+                <div class="h-8 bg-gray-700 rounded w-3/4"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabs Navigation -->
+    <div class="flex gap-3 mb-6 overflow-x-auto pb-2">
+        <button onclick="switchTab('anime')" id="tab-anime" class="tab-btn active">
+            <i data-lucide="video" class="w-4 h-4 inline mr-2"></i> Tambah Anime
+        </button>
+        <button onclick="switchTab('episode')" id="tab-episode" class="tab-btn">
+            <i data-lucide="film" class="w-4 h-4 inline mr-2"></i> Tambah Episode
+        </button>
+        <button onclick="switchTab('badge')" id="tab-badge" class="tab-btn">
+            <i data-lucide="trophy" class="w-4 h-4 inline mr-2"></i> Tambah Badge
+        </button>
+        <button onclick="switchTab('users')" id="tab-users" class="tab-btn">
+            <i data-lucide="users" class="w-4 h-4 inline mr-2"></i> Kelola User
+        </button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 1: TAMBAH ANIME -->
+    <!-- ============================================ -->
+    <div id="form-anime" class="space-y-4">
+        <h2 class="text-xl font-bold text-violet-400 mb-4 flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5"></i> Data Anime Baru
+        </h2>
+
+        <input type="text" id="a-title" placeholder="Judul Anime (Ex: One Piece)" class="input-dark">
+        <input type="text" id="a-slug" placeholder="Slug URL (Ex: one-piece)" class="input-dark">
+        <textarea id="a-synopsis" placeholder="Sinopsis..." class="input-dark h-24"></textarea>
+
+        <div class="grid grid-cols-2 gap-4">
+            <input type="text" id="a-genres" placeholder="Genre (Pisah koma)" class="input-dark">
+            <input type="text" id="a-year" placeholder="Tahun Rilis" class="input-dark">
+            <input type="text" id="a-rating" placeholder="Rating (0-10)" class="input-dark">
+            <select id="a-status" class="input-dark">
+                <option value="">-- Pilih Status --</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Completed">Completed</option>
+                <option value="Movie">Movie</option>
+            </select>
+        </div>
+
+        <input type="text" id="a-poster" placeholder="Link Poster / Path Storage" class="input-dark">
+
+        <button onclick="submitAnime()" class="btn-primary flex items-center justify-center gap-2">
+            <i data-lucide="save" class="w-4 h-4"></i> Simpan Anime
+        </button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 2: TAMBAH EPISODE -->
+    <!-- ============================================ -->
+    <div id="form-episode" class="hidden space-y-4">
+        <h2 class="text-xl font-bold text-cyan-400 mb-4 flex items-center gap-2">
+            <i data-lucide="upload" class="w-5 h-5"></i> Upload Episode
+        </h2>
+
+        <div>
+            <label class="text-xs text-gray-500 mb-1 block">Pilih Anime</label>
+            <select id="e-anime-select" class="input-dark">
+                <option value="">Memuat daftar anime...</option>
+            </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <input type="number" id="e-number" placeholder="Episode Ke-" class="input-dark">
+            <input type="number" id="e-duration" placeholder="Durasi (Menit)" class="input-dark" value="24">
+        </div>
+
+        <input type="text" id="e-title" placeholder="Judul Episode (Opsional)" class="input-dark">
+
+        <div class="p-4 border border-violet-500/30 rounded-lg bg-violet-500/5">
+            <label class="text-xs text-violet-300 font-bold block mb-2 flex items-center gap-2">
+                <i data-lucide="cloud-upload" class="w-4 h-4"></i> GOOGLE DRIVE FILE ID
+            </label>
+            <input type="text" id="e-gdrive" placeholder="Paste ID File di sini (Ex: 1A2B3C...)"
+                class="input-dark border-violet-500/50">
+            <p class="text-[10px] text-gray-500 mt-2">
+                *Klik kanan video di GDrive, lalu Get Link, dan Copy ID acak di tengah URL.
+            </p>
+        </div>
+
+        <button onclick="submitEpisode()"
+            class="btn-primary bg-cyan-600 hover:bg-cyan-700 flex items-center justify-center gap-2">
+            <i data-lucide="save" class="w-4 h-4"></i> Simpan Episode
+        </button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 3: TAMBAH BADGE -->
+    <!-- ============================================ -->
+    <div id="form-badge" class="hidden space-y-4">
+        <h2 class="text-xl font-bold text-yellow-400 mb-4 flex items-center gap-2">
+            <i data-lucide="award" class="w-5 h-5"></i> Buat Achievement Baru
+        </h2>
+
+        <input type="text" id="b-code" placeholder="Kode Badge (Ex: NIGHT_OWL)" class="input-dark">
+        <input type="text" id="b-name" placeholder="Nama Badge (Ex: Night Owl)" class="input-dark">
+        <textarea id="b-description" placeholder="Deskripsi Achievement..." class="input-dark h-20"></textarea>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="text-xs text-gray-500 mb-1 block">Icon (Lucide)</label>
+                <input type="text" id="b-icon" placeholder="Ex: moon, flame, crown" class="input-dark">
+                <p class="text-[10px] text-gray-600 mt-1">Lihat: <a href="https://lucide.dev" target="_blank"
+                        class="text-violet-400">lucide.dev</a></p>
+            </div>
+            <div>
+                <label class="text-xs text-gray-500 mb-1 block">Kategori</label>
+                <select id="b-category" class="input-dark">
+                    <option value="WATCH">WATCH (Tontonan)</option>
+                    <option value="STREAK">STREAK (Konsistensi)</option>
+                    <option value="SOCIAL">SOCIAL (Interaksi)</option>
+                    <option value="SPECIAL">SPECIAL (Khusus)</option>
+                </select>
+            </div>
+        </div>
+
+        <div>
+            <label class="text-xs text-gray-500 mb-1 block">Syarat (Jumlah)</label>
+            <input type="number" id="b-requirement" placeholder="Ex: 10 (untuk 10 episode)" class="input-dark"
+                value="1">
+        </div>
+
+        <button onclick="submitBadge()"
+            class="btn-primary bg-yellow-600 hover:bg-yellow-700 flex items-center justify-center gap-2">
+            <i data-lucide="save" class="w-4 h-4"></i> Simpan Badge
+        </button>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TAB 4: KELOLA USER -->
+    <!-- ============================================ -->
+    <div id="form-users" class="hidden space-y-4">
+        <h2 class="text-xl font-bold text-pink-400 mb-4 flex items-center gap-2">
+            <i data-lucide="users-2" class="w-5 h-5"></i> Daftar User Terdaftar
+        </h2>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-gray-800 text-left">
+                        <th class="pb-3 text-gray-500">Username</th>
+                        <th class="pb-3 text-gray-500">Email</th>
+                        <th class="pb-3 text-gray-500">Role</th>
+                        <th class="pb-3 text-gray-500">Level</th>
+                        <th class="pb-3 text-gray-500">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list">
+                    <tr>
+                        <td colspan="5" class="text-center py-8 text-gray-600">Memuat data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
+    <script>
+        lucide.createIcons();
+        const token = localStorage.getItem('token');
+
+        // ==========================================
+        // SWITCH TAB
+        // ==========================================
+        function switchTab(tab) {
+            // Hide all forms
+            document.getElementById('form-anime').classList.add('hidden');
+            document.getElementById('form-episode').classList.add('hidden');
+            document.getElementById('form-badge').classList.add('hidden');
+            document.getElementById('form-users').classList.add('hidden');
+
+            // Remove active state from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected form
+            if (tab === 'anime') {
+                document.getElementById('form-anime').classList.remove('hidden');
+                document.getElementById('tab-anime').classList.add('active');
+            } else if (tab === 'episode') {
+                document.getElementById('form-episode').classList.remove('hidden');
+                document.getElementById('tab-episode').classList.add('active');
+                loadAnimeList();
+            } else if (tab === 'badge') {
+                document.getElementById('form-badge').classList.remove('hidden');
+                document.getElementById('tab-badge').classList.add('active');
+            } else if (tab === 'users') {
+                document.getElementById('form-users').classList.remove('hidden');
+                document.getElementById('tab-users').classList.add('active');
+                loadUserList();
+            }
+
+            lucide.createIcons();
+        }
+
+        // ==========================================
+        // LOAD STATS
+        // ==========================================
+        async function loadStats() {
+            try {
+                const res = await fetch('/api/admin/stats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const stats = await res.json();
+
+                document.getElementById('stats-grid').innerHTML = `
+                    <div class="stat-card">
+                        <p class="text-xs text-gray-500 uppercase mb-1">Total Anime</p>
+                        <p class="text-3xl font-bold text-violet-400">${stats.totalAnime || 0}</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-xs text-gray-500 uppercase mb-1">Total Episode</p>
+                        <p class="text-3xl font-bold text-cyan-400">${stats.totalEpisodes || 0}</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-xs text-gray-500 uppercase mb-1">Total User</p>
+                        <p class="text-3xl font-bold text-pink-400">${stats.totalUsers || 0}</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-xs text-gray-500 uppercase mb-1">Total Badge</p>
+                        <p class="text-3xl font-bold text-yellow-400">${stats.totalBadges || 0}</p>
+                    </div>
+                `;
+            } catch (err) {
+                console.error("Gagal load stats:", err);
+            }
+        }
+
+        // ==========================================
+        // SUBMIT ANIME
+        // ==========================================
+        async function submitAnime() {
+            const data = {
+                title: document.getElementById('a-title').value,
+                slug: document.getElementById('a-slug').value,
+                synopsis: document.getElementById('a-synopsis').value,
+                genres: document.getElementById('a-genres').value.split(',').map(g => g.trim()),
+                releaseYear: document.getElementById('a-year').value,
+                rating: document.getElementById('a-rating').value,
+                status: document.getElementById('a-status').value,
+                posterUrl: document.getElementById('a-poster').value
+            };
+
+            if (!data.title || !data.slug) return alert("Judul dan Slug wajib diisi!");
+
+            try {
+                const res = await fetch('/api/anime', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    alert("✅ Anime Berhasil Ditambahkan!");
+                    document.getElementById('a-title').value = '';
+                    document.getElementById('a-slug').value = '';
+                    document.getElementById('a-synopsis').value = '';
+                    loadStats();
+                } else {
+                    alert("❌ Gagal: " + result.message);
+                }
+            } catch (err) {
+                alert("Error Server");
+            }
+        }
+
+        // ==========================================
+        // LOAD ANIME LIST (untuk dropdown episode)
+        // ==========================================
+        async function loadAnimeList() {
+            const select = document.getElementById('e-anime-select');
+
+            try {
+                select.innerHTML = '<option value="">⏳ Memuat daftar anime...</option>';
+
+                const res = await fetch('/api/anime?limit=100');
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                }
+
+                const result = await res.json();
+                const animes = result.animes || result; // Handle both response formats
+
+                select.innerHTML = '<option value="">-- Pilih Anime --</option>';
+
+                if (animes.length === 0) {
+                    select.innerHTML += '<option value="" disabled>Belum ada anime tersedia</option>';
+                    return;
+                }
+
+                animes.forEach(anime => {
+                    const episodeInfo = anime.totalEpisodes ? ` (${anime.totalEpisodes} eps)` : '';
+                    select.innerHTML += `<option value="${anime._id}">${anime.title}${episodeInfo}</option>`;
+                });
+
+                console.log(`✅ Loaded ${animes.length} anime untuk episode dropdown`);
+            } catch (err) {
+                console.error('❌ Error loading anime list:', err);
+                select.innerHTML = '<option value="">❌ Gagal memuat data anime</option>';
+                alert('Gagal memuat daftar anime. Pastikan server berjalan dan database terkoneksi.');
+            }
+        }
+
+        // ==========================================
+        // SUBMIT EPISODE
+        // ==========================================
+        async function submitEpisode() {
+            const submitBtn = event.target;
+            const data = {
+                animeId: document.getElementById('e-anime-select').value,
+                episodeNumber: document.getElementById('e-number').value,
+                duration: document.getElementById('e-duration').value,
+                title: document.getElementById('e-title').value,
+                gdriveId: document.getElementById('e-gdrive').value
+            };
+
+            // Validasi input
+            if (!data.animeId) return alert("❌ Pilih anime terlebih dahulu!");
+            if (!data.episodeNumber) return alert("❌ Nomor episode wajib diisi!");
+            if (!data.gdriveId) return alert("❌ Google Drive ID wajib diisi!");
+
+            // Loading state
+            submitBtn.disabled = true;
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 inline animate-spin"></i> Menyimpan...';
+            lucide.createIcons();
+
+            try {
+                const res = await fetch('/api/anime/episode', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                if (res.ok) {
+                    // Success dengan detail info
+                    const animeSelect = document.getElementById('e-anime-select');
+                    const animeName = animeSelect.options[animeSelect.selectedIndex].text;
+
+                    alert(`✅ Episode Berhasil Ditambahkan!\n\nAnime: ${animeName}\nEpisode: ${data.episodeNumber}\nTotal Episode: ${result.data?.totalEpisodes || 'N/A'}`);
+
+                    // Clear form
+                    document.getElementById('e-number').value = '';
+                    document.getElementById('e-title').value = '';
+                    document.getElementById('e-gdrive').value = '';
+                    document.getElementById('e-duration').value = '24';
+
+                    // Refresh stats
+                    await loadStats();
+                } else {
+                    // Error dengan pesan detail
+                    alert(`❌ Gagal Menyimpan Episode\n\n${result.message || 'Unknown error'}`);
+                    console.error('Error details:', result);
+                }
+            } catch (err) {
+                alert(`❌ Error Server\n\nTidak dapat terhubung ke server.\nPastikan server sedang berjalan di http://localhost:4000`);
+                console.error('Fetch error:', err);
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                lucide.createIcons();
+            }
+        }
+
+        // ==========================================
+        // SUBMIT BADGE
+        // ==========================================
+        async function submitBadge() {
+            const data = {
+                code: document.getElementById('b-code').value.toUpperCase(),
+                name: document.getElementById('b-name').value,
+                description: document.getElementById('b-description').value,
+                icon: document.getElementById('b-icon').value,
+                category: document.getElementById('b-category').value,
+                requirementValue: document.getElementById('b-requirement').value
+            };
+
+            if (!data.code || !data.name) return alert("Kode dan Nama wajib diisi!");
+
+            try {
+                const res = await fetch('/api/admin/badge', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (res.ok) {
+                    alert("✅ Badge Berhasil Dibuat!");
+                    document.getElementById('b-code').value = '';
+                    document.getElementById('b-name').value = '';
+                    document.getElementById('b-description').value = '';
+                    loadStats();
+                } else {
+                    alert("❌ Gagal: " + result.message);
+                }
+            } catch (err) {
+                alert("Error Server");
+            }
+        }
+
+        // ==========================================
+        // LOAD USER LIST
+        // ==========================================
+        async function loadUserList() {
+            try {
+                const res = await fetch('/api/admin/users', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const users = await res.json();
+                const tbody = document.getElementById('user-list');
+
+                tbody.innerHTML = '';
+
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-8 text-gray-600">Belum ada user terdaftar</td></tr>';
+                    return;
+                }
+
+                users.forEach(user => {
+                    tbody.innerHTML += `
+                        <tr class="border-b border-gray-800">
+                            <td class="py-3">${user.username}</td>
+                            <td class="py-3 text-gray-400">${user.email}</td>
+                            <td class="py-3">
+                                <span class="px-2 py-1 rounded text-xs ${user.role === 'admin' ? 'bg-red-500/20 text-red-400' : 'bg-blue-500/20 text-blue-400'}">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <td class="py-3 text-violet-400">${user.stats?.level || 1}</td>
+                            <td class="py-3">
+                                <button onclick="toggleRole('${user._id}', '${user.role}')" class="text-xs text-cyan-400 hover:text-cyan-300">
+                                    Change Role
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            } catch (err) {
+                console.error("Gagal load users:", err);
+            }
+        }
+
+        // ==========================================
+        // TOGGLE USER ROLE
+        // ==========================================
+        async function toggleRole(userId, currentRole) {
+            const newRole = currentRole === 'admin' ? 'user' : 'admin';
+            if (!confirm(`Yakin ubah role menjadi ${newRole}?`)) return;
+
+            try {
+                const res = await fetch(`/api/admin/users/${userId}/role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ role: newRole })
+                });
+
+                if (res.ok) {
+                    alert("✅ Role berhasil diubah!");
+                    loadUserList();
+                } else {
+                    alert("❌ Gagal mengubah role");
+                }
+            } catch (err) {
+                alert("Error Server");
+            }
+        }
+
+        // Logout
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        // Init
+        loadStats();
+    </script>
+</body>
+
+</html>

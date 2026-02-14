@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan - ANNIMVERSE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/guard.js"></script>
+
+    <style>
+        body { font-family: 'Outfit', sans-serif; background-color: #050505; color: #e0e0e0; }
+        .input-dark {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white; padding: 12px; rounded-xl; width: 100%; outline: none; transition: 0.3s;
+        }
+        .input-dark:focus { border-color: #8b5cf6; box-shadow: 0 0 10px rgba(139, 92, 246, 0.2); }
+        .btn-save {
+            background: linear-gradient(90deg, #7c3aed, #2563eb);
+            padding: 12px; rounded-xl; width: 100%; font-weight: bold; color: white; transition: 0.3s;
+        }
+        .btn-save:hover { box-shadow: 0 0 20px rgba(124, 58, 237, 0.5); transform: translateY(-2px); }
+    </style>
+</head>
+<body class="pb-20 max-w-md mx-auto min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="flex items-center gap-4 p-6 sticky top-0 bg-[#050505]/90 backdrop-blur-md z-50">
+        <a href="profile.html" class="p-2 rounded-full hover:bg-white/10 transition">
+            <i data-lucide="arrow-left" class="w-6 h-6"></i>
+        </a>
+        <h1 class="text-xl font-bold text-white">Pengaturan Akun</h1>
+    </nav>
+
+    <main class="px-6 flex-1">
+        <!-- Form Info Dasar -->
+        <section class="mb-8">
+            <h2 class="text-sm font-bold text-gray-500 uppercase mb-4 tracking-wider">Info Profil</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 ml-1 mb-1 block">Username</label>
+                    <input type="text" id="username" class="input-dark">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-1 mb-1 block">Email</label>
+                    <input type="email" id="email" class="input-dark">
+                </div>
+            </div>
+        </section>
+
+        <!-- Form Keamanan -->
+        <section class="mb-8">
+            <h2 class="text-sm font-bold text-gray-500 uppercase mb-4 tracking-wider">Keamanan</h2>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 ml-1 mb-1 block">Password Lama</label>
+                    <input type="password" id="old-pass" placeholder="••••••••" class="input-dark">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-1 mb-1 block">Password Baru</label>
+                    <input type="password" id="new-pass" placeholder="Biarkan kosong jika tidak diganti" class="input-dark">
+                </div>
+            </div>
+        </section>
+
+        <button onclick="saveChanges()" class="btn-save flex items-center justify-center gap-2">
+            <i data-lucide="save" class="w-5 h-5"></i> Simpan Perubahan
+        </button>
+
+        <!-- Danger Zone -->
+        <div class="mt-12 pt-6 border-t border-white/10 text-center">
+            <button onclick="logout()" class="text-red-500 text-sm font-bold hover:text-red-400 transition flex items-center justify-center gap-2 mx-auto">
+                <i data-lucide="log-out" class="w-4 h-4"></i> Keluar dari Akun
+            </button>
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+
+        // 1. Isi Form dengan Data Saat Ini
+        if (user) {
+            document.getElementById('username').value = user.username;
+            document.getElementById('email').value = user.email;
+        }
+
+        // 2. Fungsi Simpan
+        async function saveChanges() {
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const oldPass = document.getElementById('old-pass').value;
+            const newPass = document.getElementById('new-pass').value;
+
+            const payload = { username, email };
+            
+            // Jika user ingin ganti password
+            if (newPass) {
+                if (!oldPass) return alert("Masukkan password lama untuk konfirmasi!");
+                payload.password = oldPass;
+                payload.newPassword = newPass;
+            }
+
+            try {
+                const res = await fetch(`/api/users/${user.id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert("✅ " + data.message);
+                    // Update LocalStorage dengan data baru
+                    localStorage.setItem('user', JSON.stringify({ ...user, ...data.user }));
+                    window.location.href = 'profile.html';
+                } else {
+                    alert("❌ " + data.message);
+                }
+            } catch (err) {
+                alert("Gagal menghubungi server");
+            }
+        }
+    </script>
+</body>
+</html>
+

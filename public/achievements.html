@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pencapaian - ANNIMVERSE</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- SATPAM (GUARD) -->
+    <script src="js/guard.js"></script>
+
+    <style>
+        :root {
+            --primary-glow: #8b5cf6;
+            --secondary-glow: #06b6d4;
+            --bg-dark: #050505;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: #e0e0e0;
+        }
+
+        /* Unlocked Badge Style */
+        .badge-card.unlocked {
+            background: linear-gradient(145deg, #1a1a1d, #121214);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+        }
+        .badge-card.unlocked .icon-box {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--primary-glow);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+            animation: pulse-glow 3s infinite;
+        }
+
+        /* Locked Badge Style */
+        .badge-card.locked {
+            background: #0a0a0c;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            filter: grayscale(1);
+        }
+        .badge-card.locked .icon-box {
+            background: #151515;
+            color: #444;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.7); }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: #1a1a1d;
+            border-radius: 99px;
+            overflow: hidden;
+            height: 8px;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, var(--secondary-glow), var(--primary-glow));
+            box-shadow: 0 0 10px var(--primary-glow);
+            transition: width 1s ease-in-out;
+        }
+    </style>
+</head>
+<body class="pb-10">
+
+    <!-- Navbar Simple -->
+    <nav class="sticky top-0 z-50 bg-[#050505]/90 backdrop-blur-md border-b border-white/10 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <a href="profile.html" class="p-2 rounded-full hover:bg-white/5 transition">
+                <i data-lucide="arrow-left" class="w-6 h-6 text-gray-400 hover:text-white"></i>
+            </a>
+            <h1 class="text-lg font-bold text-white">Hall of Fame</h1>
+        </div>
+        <div class="text-xs font-mono text-violet-400 bg-violet-500/10 px-2 py-1 rounded border border-violet-500/20">
+            LEVEL 5
+        </div>
+    </nav>
+
+    <!-- Header Stats -->
+    <header class="px-6 pt-6 pb-2 text-center">
+        <div class="inline-block p-3 rounded-full bg-yellow-500/10 border border-yellow-500/20 mb-3">
+            <i data-lucide="trophy" class="w-8 h-8 text-yellow-500 fill-yellow-500/20"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-white mb-1">Pencapaian Kamu</h2>
+        <p class="text-sm text-gray-400 mb-6">Kumpulkan badge dengan menonton dan berinteraksi!</p>
+
+        <!-- Progress Bar -->
+        <div class="max-w-xs mx-auto mb-2 flex justify-between text-xs text-gray-400">
+            <span>Progress</span>
+            <span class="text-white font-bold">2 / 5 Terbuka</span>
+        </div>
+        <div class="progress-container max-w-xs mx-auto">
+            <div class="progress-fill" style="width: 40%"></div>
+        </div>
+    </header>
+
+    <!-- Badge Grid -->
+    <main class="px-4 py-8 max-w-2xl mx-auto">
+        <div class="grid grid-cols-2 gap-4">
+
+            <!-- BADGE 1: UNLOCKED (Contoh Visual) -->
+            <div class="badge-card unlocked p-4 rounded-xl flex flex-col items-center text-center relative overflow-hidden group">
+                <!-- Shine Effect -->
+                <div class="absolute inset-0 bg-gradient-to-tr from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                
+                <div class="icon-box w-12 h-12 rounded-full flex items-center justify-center mb-3 text-xl">
+                    <i data-lucide="baby" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-white font-bold text-sm mb-1">Pendatang Baru</h3>
+                <p class="text-[10px] text-gray-400 leading-tight">Menyelesaikan 1 episode anime pertama.</p>
+                
+                <div class="mt-3 text-[10px] text-green-400 font-bold bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
+                    TERBUKA
+                </div>
+            </div>
+
+            <!-- BADGE 2: UNLOCKED -->
+            <div class="badge-card unlocked p-4 rounded-xl flex flex-col items-center text-center relative">
+                <div class="icon-box w-12 h-12 rounded-full flex items-center justify-center mb-3 text-xl">
+                    <i data-lucide="zap" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-white font-bold text-sm mb-1">Marathon Runner</h3>
+                <p class="text-[10px] text-gray-400 leading-tight">Menonton 5 episode dalam satu hari.</p>
+                <div class="mt-3 text-[10px] text-green-400 font-bold bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">
+                    TERBUKA
+                </div>
+            </div>
+
+            <!-- BADGE 3: LOCKED -->
+            <div class="badge-card locked p-4 rounded-xl flex flex-col items-center text-center">
+                <div class="icon-box w-12 h-12 rounded-full flex items-center justify-center mb-3 text-xl">
+                    <i data-lucide="flame" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-gray-300 font-bold text-sm mb-1">On Fire</h3>
+                <p class="text-[10px] text-gray-500 leading-tight">Menjaga watching streak selama 3 hari.</p>
+                <div class="mt-3 text-[10px] text-gray-500 font-bold flex items-center gap-1">
+                    <i data-lucide="lock" class="w-3 h-3"></i> TERKUNCI
+                </div>
+            </div>
+
+            <!-- BADGE 4: LOCKED -->
+            <div class="badge-card locked p-4 rounded-xl flex flex-col items-center text-center">
+                <div class="icon-box w-12 h-12 rounded-full flex items-center justify-center mb-3 text-xl">
+                    <i data-lucide="crown" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-gray-300 font-bold text-sm mb-1">Wibu Elit</h3>
+                <p class="text-[10px] text-gray-500 leading-tight">Mencapai total waktu tonton 100 jam.</p>
+                <div class="mt-3 text-[10px] text-gray-500 font-bold flex items-center gap-1">
+                    <i data-lucide="lock" class="w-3 h-3"></i> TERKUNCI
+                </div>
+            </div>
+
+            <!-- BADGE 5: LOCKED -->
+            <div class="badge-card locked p-4 rounded-xl flex flex-col items-center text-center">
+                <div class="icon-box w-12 h-12 rounded-full flex items-center justify-center mb-3 text-xl">
+                    <i data-lucide="message-circle" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-gray-300 font-bold text-sm mb-1">Social Butterfly</h3>
+                <p class="text-[10px] text-gray-500 leading-tight">Memberikan 10 komentar pada anime berbeda.</p>
+                <div class="mt-3 text-[10px] text-gray-500 font-bold flex items-center gap-1">
+                    <i data-lucide="lock" class="w-3 h-3"></i> TERKUNCI
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        lucide.createIcons();
+        // Nanti di sini kita akan fetch data asli dari API
+        // Untuk sekarang hardcode HTML dulu biar kelihatan desainnya
+    </script>
+</body>
+</html>
+
