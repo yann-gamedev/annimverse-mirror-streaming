@@ -60,6 +60,31 @@ app.get('/api/status', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// --- DEBUG DB ENDPOINT (Remove in production later) ---
+app.get('/api/debug-db', async (req, res) => {
+    try {
+        const mongoose = require('mongoose');
+        const state = mongoose.connection.readyState;
+        const states = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
+
+        // Check outgoing IP (to verify whitelist)
+        const ipRes = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipRes.json();
+
+        res.json({
+            status: states[state] || 'unknown',
+            readyState: state,
+            host: mongoose.connection.host,
+            dbName: mongoose.connection.name,
+            serverIP: ipData.ip,
+            envLoaded: !!process.env.MONGO_URI,
+            mongoUriPrefix: process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 15) + '...' : 'undefined'
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // --- ROUTING API ---
 app.use('/api/auth', authRoutes);
 app.use('/api/anime', animeRoutes);
