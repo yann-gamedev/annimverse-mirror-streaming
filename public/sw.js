@@ -1,5 +1,5 @@
 // 🔧 DEVELOPMENT MODE - Set to true to disable caching during development
-const DEV_MODE = true; // Change to false for production
+const DEV_MODE = false; // Set to true only for local development
 
 const CACHE_VERSION = 'annimverse-v1';
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
@@ -59,10 +59,9 @@ self.addEventListener('fetch', (event) => {
     const { request } = event;
     const url = new URL(request.url);
 
-    // 🔧 DEV MODE: Bypass all caching and fetch from network
+    // 🔧 DEV MODE: Skip all service worker interception entirely
     if (DEV_MODE) {
-        event.respondWith(fetch(request));
-        return;
+        return; // Let the browser handle it normally
     }
 
     // Skip non-GET requests

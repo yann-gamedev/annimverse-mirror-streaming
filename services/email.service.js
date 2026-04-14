@@ -2,27 +2,27 @@ const nodemailer = require('nodemailer');
 
 // Create transporter
 const createTransporter = () => {
-    return nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: process.env.SMTP_PORT || 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
-        }
-    });
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: process.env.SMTP_PORT || 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS
+    }
+  });
 };
 
 // Send welcome email
 exports.sendWelcomeEmail = async (userEmail, username) => {
-    try {
-        const transporter = createTransporter();
+  try {
+    const transporter = createTransporter();
 
-        const mailOptions = {
-            from: process.env.SMTP_FROM || `"ANNIMVERSE" <${process.env.SMTP_USER}>`,
-            to: userEmail,
-            subject: '🎉 Welcome to ANNIMVERSE!',
-            html: `
+    const mailOptions = {
+      from: process.env.SMTP_FROM || `"ANNIMVERSE" <${process.env.SMTP_USER}>`,
+      to: userEmail,
+      subject: '🎉 Welcome to ANNIMVERSE!',
+      html: `
         <!DOCTYPE html>
         <html>
         <head>
@@ -73,7 +73,7 @@ exports.sendWelcomeEmail = async (userEmail, username) => {
               </div>
               
               <div style="text-align: center;">
-                <a href="http://localhost:4000/menu.html" class="button">Mulai Menonton Sekarang</a>
+                <a href="${process.env.BASE_URL || 'https://annimverse.vercel.app'}/menu.html" class="button">Mulai Menonton Sekarang</a>
               </div>
               
               <p class="message" style="margin-top: 30px;">
@@ -94,27 +94,27 @@ exports.sendWelcomeEmail = async (userEmail, username) => {
         </body>
         </html>
       `
-        };
+    };
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log('✅ Welcome email sent:', info.messageId);
-        return true;
-    } catch (error) {
-        console.error('❌ Failed to send welcome email:', error);
-        return false;
-    }
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Welcome email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to send welcome email:', error);
+    return false;
+  }
 };
 
 // Send password reset code
 exports.sendPasswordResetEmail = async (userEmail, username, resetCode) => {
-    try {
-        const transporter = createTransporter();
+  try {
+    const transporter = createTransporter();
 
-        const mailOptions = {
-            from: process.env.SMTP_FROM || `"ANNIMVERSE" <${process.env.SMTP_USER}>`,
-            to: userEmail,
-            subject: '🔐 Reset Password - ANNIMVERSE',
-            html: `
+    const mailOptions = {
+      from: process.env.SMTP_FROM || `"ANNIMVERSE" <${process.env.SMTP_USER}>`,
+      to: userEmail,
+      subject: '🔐 Reset Password - ANNIMVERSE',
+      html: `
         <!DOCTYPE html>
         <html>
         <head>
@@ -176,26 +176,26 @@ exports.sendPasswordResetEmail = async (userEmail, username, resetCode) => {
         </body>
         </html>
       `
-        };
+    };
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log('✅ Password reset email sent:', info.messageId);
-        return true;
-    } catch (error) {
-        console.error('❌ Failed to send reset email:', error);
-        return false;
-    }
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Password reset email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('❌ Failed to send reset email:', error);
+    return false;
+  }
 };
 
 // Test email configuration
 exports.testEmailConfig = async () => {
-    try {
-        const transporter = createTransporter();
-        await transporter.verify();
-        console.log('✅ Email configuration is valid');
-        return true;
-    } catch (error) {
-        console.error('❌ Email configuration error:', error);
-        return false;
-    }
+  try {
+    const transporter = createTransporter();
+    await transporter.verify();
+    console.log('✅ Email configuration is valid');
+    return true;
+  } catch (error) {
+    console.error('❌ Email configuration error:', error);
+    return false;
+  }
 };

@@ -8,13 +8,12 @@ const helmet = require('helmet');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 
-// --- IMPORT ROUTE ---
+// --- IMPORT ROUTES ---
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth.routes');
 const animeRoutes = require('./routes/anime.routes');
 const userRoutes = require('./routes/user.routes');
 const interactionRoutes = require('./routes/interaction.routes');
-// [WAJIB] Import route streaming yang tadi hilang
 const streamRoutes = require('./routes/stream.routes');
 const adminRoutes = require('./routes/admin.routes');
 const requestRoutes = require('./routes/request.routes');
@@ -30,78 +29,76 @@ connectDB();
 // Security & Performance
 app.set('trust proxy', 1); // Required for Vercel/Heroku (Rate Limiting)
 app.use(helmet({
-    contentSecurityPolicy: false, // Disable temporarily if it breaks inline scripts (common in simple HTML apps)
+    contentSecurityPolicy: false,
     crossOriginEmbedderPolicy: false
 }));
-app.use(compression()); // Gzip compression
+app.use(compression());
 
-// Rate Limiting (100 req / 15 min)
-const limiter = rateLimit({
+// Rate Limiting - General API (100 req / 15 min)
+const generalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
     standardHeaders: true,
     legacyHeaders: false,
     message: { message: "Too many requests, please try again later." }
 });
-// Apply limiter to all API routes
-app.use('/api/', limiter);
 
-app.use(cors()); // Configure origin in production!
+// Rate Limiting - Auth routes (more generous: 30 req / 15 min per IP)
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { message: "Terlalu banyak percobaan, coba lagi nanti." }
+});
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+
+// Only use verbose logging in development
+if (process.env.NODE_ENV !== 'production') {
+    app.use(morgan('dev'));
+}
 
 // --- STATIC FILES ---
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/storage', express.static(path.join(__dirname, 'storage')));
 
-// --- SIMPLE STATUS ENDPOINT (for offline detection) ---
+// --- STATUS ENDPOINT (for health check and offline detection) ---
 app.get('/api/status', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// --- DEBUG DB ENDPOINT (Remove in production later) ---
-app.get('/api/debug-db', async (req, res) => {
-    try {
-        const mongoose = require('mongoose');
-        const state = mongoose.connection.readyState;
-        const states = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
-
-        // Check outgoing IP (to verify whitelist)
-        const ipRes = await fetch('https://api.ipify.org?format=json');
-        const ipData = await ipRes.json();
-
-        res.json({
-            status: states[state] || 'unknown',
-            readyState: state,
-            host: mongoose.connection.host,
-            dbName: mongoose.connection.name,
-            serverIP: ipData.ip,
-            envLoaded: !!process.env.MONGO_URI,
-            mongoUriPrefix: process.env.MONGO_URI ? process.env.MONGO_URI.substring(0, 15) + '...' : 'undefined'
-        });
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
 // --- ROUTING API ---
-app.use('/api/auth', authRoutes);
-app.use('/api/anime', animeRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/interact', interactionRoutes);
-// [WAJIB] Pasang jalur streaming di sini
-app.use('/api/stream', streamRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/requests', requestRoutes);
-app.use('/api/recommendations', recommendationRoutes);
+// Auth routes get their own more generous limiter
+app.use('/api/auth', authLimiter, authRoutes);
+
+// All other API routes use the general limiter
+app.use('/api/anime', generalLimiter, animeRoutes);
+app.use('/api/users', generalLimiter, userRoutes);
+app.use('/api/interact', generalLimiter, interactionRoutes);
+app.use('/api/stream', generalLimiter, streamRoutes);
+app.use('/api/admin', generalLimiter, adminRoutes);
+app.use('/api/requests', generalLimiter, requestRoutes);
+app.use('/api/recommendations', generalLimiter, recommendationRoutes);
 
 // --- FALLBACK ---
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// --- START ---
-app.listen(PORT, () => {
-    console.log(`\n🚀 Server Annimverse meluncur di: http://localhost:${PORT}`);
+// --- GLOBAL ERROR HANDLER ---
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err);
+    res.status(500).json({ message: 'Internal server error' });
 });
+
+// --- START ---
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`\n🚀 Server Annimverse running at: http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
