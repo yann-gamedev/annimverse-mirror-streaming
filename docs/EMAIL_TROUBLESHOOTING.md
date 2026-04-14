@@ -34,6 +34,7 @@
 If Gmail continues to fail, you can use other free SMTP services:
 
 #### **SendGrid** (Free 100 emails/day):
+
 ```env
 SMTP_HOST=smtp.sendgrid.net
 SMTP_PORT=587
@@ -43,6 +44,7 @@ SMTP_FROM=annimversea@gmail.com
 ```
 
 #### **Mailgun** (Free 5,000 emails/month):
+
 ```env
 SMTP_HOST=smtp.mailgun.org
 SMTP_PORT=587

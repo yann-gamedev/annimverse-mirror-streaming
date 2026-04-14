@@ -1,25 +1,25 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { protect } = require('../middleware/auth.middleware');
+const { protect } = require("../middleware/auth.middleware");
 const {
-    createRequest,
-    getAllRequests,
-    getRequestById,
-    voteRequest,
-    deleteRequest,
-    updateRequestStatus
-} = require('../controllers/request.controller');
+  createRequest,
+  getAllRequests,
+  getRequestById,
+  voteRequest,
+  deleteRequest,
+  updateRequestStatus,
+} = require("../controllers/request.controller");
 
 // Public routes
-router.get('/', getAllRequests);
-router.get('/:id', getRequestById);
+router.get("/", getAllRequests);
+router.get("/:id", getRequestById);
 
 // Protected routes
-router.post('/', protect, createRequest);
-router.put('/:id/vote', protect, voteRequest);
-router.delete('/:id', protect, deleteRequest);
+router.post("/", protect, createRequest);
+router.put("/:id/vote", protect, voteRequest);
+router.delete("/:id", protect, deleteRequest);
 
 // Admin routes (protect middleware checks for admin role)
-router.put('/:id/status', protect, updateRequestStatus);
+router.put("/:id/status", protect, updateRequestStatus);
 
 module.exports = router;

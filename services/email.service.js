@@ -1,15 +1,15 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 // Create transporter
 const createTransporter = () => {
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
     port: process.env.SMTP_PORT || 587,
     secure: false, // true for 465, false for other ports
     auth: {
       user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    }
+      pass: process.env.SMTP_PASS,
+    },
   });
 };
 
@@ -21,7 +21,7 @@ exports.sendWelcomeEmail = async (userEmail, username) => {
     const mailOptions = {
       from: process.env.SMTP_FROM || `"ANNIMVERSE" <${process.env.SMTP_USER}>`,
       to: userEmail,
-      subject: '🎉 Welcome to ANNIMVERSE!',
+      subject: "🎉 Welcome to ANNIMVERSE!",
       html: `
         <!DOCTYPE html>
         <html>
@@ -73,7 +73,7 @@ exports.sendWelcomeEmail = async (userEmail, username) => {
               </div>
               
               <div style="text-align: center;">
-                <a href="${process.env.BASE_URL || 'https://annimverse.vercel.app'}/menu.html" class="button">Mulai Menonton Sekarang</a>
+                <a href="${process.env.BASE_URL || "https://annimverse.vercel.app"}/menu.html" class="button">Mulai Menonton Sekarang</a>
               </div>
               
               <p class="message" style="margin-top: 30px;">
@@ -93,14 +93,14 @@ exports.sendWelcomeEmail = async (userEmail, username) => {
           </div>
         </body>
         </html>
-      `
+      `,
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Welcome email sent:', info.messageId);
+    console.log("✅ Welcome email sent:", info.messageId);
     return true;
   } catch (error) {
-    console.error('❌ Failed to send welcome email:', error);
+    console.error("❌ Failed to send welcome email:", error);
     return false;
   }
 };
@@ -113,7 +113,7 @@ exports.sendPasswordResetEmail = async (userEmail, username, resetCode) => {
     const mailOptions = {
       from: process.env.SMTP_FROM || `"ANNIMVERSE" <${process.env.SMTP_USER}>`,
       to: userEmail,
-      subject: '🔐 Reset Password - ANNIMVERSE',
+      subject: "🔐 Reset Password - ANNIMVERSE",
       html: `
         <!DOCTYPE html>
         <html>
@@ -175,14 +175,14 @@ exports.sendPasswordResetEmail = async (userEmail, username, resetCode) => {
           </div>
         </body>
         </html>
-      `
+      `,
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log('✅ Password reset email sent:', info.messageId);
+    console.log("✅ Password reset email sent:", info.messageId);
     return true;
   } catch (error) {
-    console.error('❌ Failed to send reset email:', error);
+    console.error("❌ Failed to send reset email:", error);
     return false;
   }
 };
@@ -192,10 +192,10 @@ exports.testEmailConfig = async () => {
   try {
     const transporter = createTransporter();
     await transporter.verify();
-    console.log('✅ Email configuration is valid');
+    console.log("✅ Email configuration is valid");
     return true;
   } catch (error) {
-    console.error('❌ Email configuration error:', error);
+    console.error("❌ Email configuration error:", error);
     return false;
   }
 };

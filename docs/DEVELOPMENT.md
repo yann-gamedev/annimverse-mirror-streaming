@@ -5,11 +5,13 @@
 The service worker is currently set to **DEVELOPMENT MODE** to allow normal development and testing without aggressive caching.
 
 ### Current Status
+
 ✅ **Dev Mode: ENABLED** - Caching is disabled, all requests go to network
 
 ### To Enable Caching (Production Mode)
 
 Edit `public/sw.js`:
+
 ```javascript
 // Change this line:
 const DEV_MODE = true;
@@ -25,6 +27,7 @@ Then reload the page and the service worker will update automatically.
 If you need to completely reset:
 
 **Option 1: Browser DevTools**
+
 1. Open DevTools (F12)
 2. Go to Application → Service Workers
 3. Click "Unregister" next to the service worker
@@ -32,13 +35,14 @@ If you need to completely reset:
 5. Delete all caches
 
 **Option 2: Console Command**
+
 ```javascript
 // Run in browser console:
-navigator.serviceWorker.getRegistrations().then(registrations => {
-  registrations.forEach(reg => reg.unregister());
+navigator.serviceWorker.getRegistrations().then((registrations) => {
+  registrations.forEach((reg) => reg.unregister());
 });
-caches.keys().then(names => {
-  names.forEach(name => caches.delete(name));
+caches.keys().then((names) => {
+  names.forEach((name) => caches.delete(name));
 });
 ```
 
@@ -53,6 +57,7 @@ The offline indicator only appears when you're actually offline. If it's showing
 ## Development Workflow
 
 ### Running the Server
+
 ```bash
 cd c:\Users\Christian\Documents\Public\annimverse\annimverse
 node server.js
@@ -61,11 +66,13 @@ node server.js
 Server will run at: `http://localhost:4000`
 
 ### Building CSS (After Tailwind Changes)
+
 ```bash
 npm run build:css
 ```
 
 ### Watching CSS (Auto-rebuild on changes)
+
 ```bash
 npm run watch:css
 ```
@@ -73,15 +80,18 @@ npm run watch:css
 ## Common Issues
 
 ### "Page is stuck offline"
+
 - Service worker dev mode is ON - requests bypass cache
 - If still seeing issues, unregister service worker in DevTools
 
 ### "Changes not appearing"
+
 - Hard reload: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
 - Clear cache in DevTools
 - Check if CSS needs rebuilding: `npm run build:css`
 
 ### "Service worker not updating"
+
 - Dev mode bypasses caching automatically
 - For production: increment CACHE_VERSION in sw.js
 

@@ -1,18 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authController = require('../controllers/auth.controller');
+const authController = require("../controllers/auth.controller");
 
 // Definisi rute:
 // POST /api/auth/register
-router.post('/register', authController.register);
+router.post("/register", authController.register);
 
 // POST /api/auth/login
-router.post('/login', authController.login);
+router.post("/login", authController.login);
 
 // POST /api/auth/forgot-password
-router.post('/forgot-password', authController.forgotPassword);
+router.post("/forgot-password", authController.forgotPassword);
 
 // POST /api/auth/reset-password
-router.post('/reset-password', authController.resetPassword);
+router.post("/reset-password", authController.resetPassword);
 
 module.exports = router;

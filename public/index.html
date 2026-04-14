@@ -1,405 +1,537 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ANNIMVERSE - Private Anime Streaming</title>
 
     <!-- Tailwind CSS (Local Bundle) -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet"
-        media="print" onload="this.media='all'">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media = 'all'"
+    />
 
     <!-- Icons (Lucide) -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        :root {
-            --primary-glow: #8b5cf6;
-            --secondary-glow: #06b6d4;
-            --bg-dark: #050505;
-            --card-bg: #0f0f11;
-        }
+      :root {
+        --primary-glow: #8b5cf6;
+        --secondary-glow: #06b6d4;
+        --bg-dark: #050505;
+        --card-bg: #0f0f11;
+      }
 
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-dark);
-            color: #e0e0e0;
-            overflow-x: hidden;
-        }
+      body {
+        font-family: "Outfit", sans-serif;
+        background-color: var(--bg-dark);
+        color: #e0e0e0;
+        overflow-x: hidden;
+      }
 
-        /* Glowing Text Effect */
-        .glow-text {
-            text-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.3);
-        }
+      /* Glowing Text Effect */
+      .glow-text {
+        text-shadow:
+          0 0 20px rgba(139, 92, 246, 0.5),
+          0 0 40px rgba(139, 92, 246, 0.3);
+      }
 
-        /* Glowing Border/Box */
-        .glow-box {
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
-            border: 1px solid rgba(139, 92, 246, 0.2);
-            transition: all 0.3s ease;
-        }
+      /* Glowing Border/Box */
+      .glow-box {
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+        border: 1px solid rgba(139, 92, 246, 0.2);
+        transition: all 0.3s ease;
+      }
 
-        .glow-box:hover {
-            box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
-            border-color: var(--primary-glow);
-            transform: translateY(-5px);
-        }
+      .glow-box:hover {
+        box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+        border-color: var(--primary-glow);
+        transform: translateY(-5px);
+      }
 
-        /* Gradient Button */
-        .btn-primary {
-            background: linear-gradient(90deg, #7c3aed, #2563eb);
-            position: relative;
-            z-index: 1;
-            overflow: hidden;
-            transition: 0.3s;
-        }
+      /* Gradient Button */
+      .btn-primary {
+        background: linear-gradient(90deg, #7c3aed, #2563eb);
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        transition: 0.3s;
+      }
 
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, #2563eb, #7c3aed);
-            opacity: 0;
-            z-index: -1;
-            transition: 0.3s;
-        }
+      .btn-primary::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, #2563eb, #7c3aed);
+        opacity: 0;
+        z-index: -1;
+        transition: 0.3s;
+      }
 
-        .btn-primary:hover::before {
-            opacity: 1;
-        }
+      .btn-primary:hover::before {
+        opacity: 1;
+      }
 
-        .btn-primary:hover {
-            box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
-        }
+      .btn-primary:hover {
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
+      }
 
-        /* Anime Card Image Overlay */
-        .card-overlay {
-            background: linear-gradient(to top, rgba(5, 5, 5, 1) 0%, rgba(5, 5, 5, 0) 100%);
-        }
+      /* Anime Card Image Overlay */
+      .card-overlay {
+        background: linear-gradient(
+          to top,
+          rgba(5, 5, 5, 1) 0%,
+          rgba(5, 5, 5, 0) 100%
+        );
+      }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            background: var(--bg-dark);
-        }
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        background: var(--bg-dark);
+      }
 
-        ::-webkit-scrollbar-thumb {
-            background: #333;
-            border-radius: 4px;
-        }
+      ::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 4px;
+      }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-glow);
-        }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-glow);
+      }
 
-        /* Background Grid Animation */
-        .bg-grid {
-            background-size: 40px 40px;
-            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
-        }
+      /* Background Grid Animation */
+      .bg-grid {
+        background-size: 40px 40px;
+        background-image:
+          linear-gradient(
+            to right,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          ),
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.05) 1px,
+            transparent 1px
+          );
+        mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+      }
     </style>
-</head>
+  </head>
 
-<body class="antialiased min-h-screen flex flex-col">
-
+  <body class="antialiased min-h-screen flex flex-col">
     <!-- Navbar -->
-    <nav class="fixed w-full z-50 top-0 bg-black/80 backdrop-blur-md border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
-                    <i data-lucide="play-circle" class="text-violet-500 w-8 h-8"></i>
-                    <span class="font-bold text-2xl tracking-wider text-white">ANNIM<span
-                            class="text-violet-500">VERSE</span></span>
-                </div>
+    <nav
+      class="fixed w-full z-50 top-0 bg-black/80 backdrop-blur-md border-b border-white/10"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo -->
+          <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer">
+            <i data-lucide="play-circle" class="text-violet-500 w-8 h-8"></i>
+            <span class="font-bold text-2xl tracking-wider text-white"
+              >ANNIM<span class="text-violet-500">VERSE</span></span
+            >
+          </div>
 
-                <!-- Desktop Menu -->
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#"
-                            class="text-white hover:text-violet-400 px-3 py-2 rounded-md text-sm font-medium transition">Home</a>
-                        <a href="#features"
-                            class="text-gray-300 hover:text-violet-400 px-3 py-2 rounded-md text-sm font-medium transition">Fitur</a>
-                        <a href="anime.html"
-                            class="text-gray-300 hover:text-violet-400 px-3 py-2 rounded-md text-sm font-medium transition">Library</a>
-                    </div>
-                </div>
-
-                <!-- Auth Buttons (Desktop) - AKAN DI-UPDATE OTOMATIS -->
-                <div id="desktop-auth" class="hidden md:flex gap-4">
-                    <!-- JavaScript akan mengisi ini -->
-                </div>
-
-                <!-- Mobile menu button -->
-                <div class="-mr-2 flex md:hidden">
-                    <button onclick="toggleMenu()"
-                        class="text-gray-400 hover:text-white inline-flex items-center justify-center p-2 rounded-md focus:outline-none">
-                        <i data-lucide="menu" class="w-6 h-6"></i>
-                    </button>
-                </div>
+          <!-- Desktop Menu -->
+          <div class="hidden md:block">
+            <div class="ml-10 flex items-baseline space-x-8">
+              <a
+                href="#"
+                class="text-white hover:text-violet-400 px-3 py-2 rounded-md text-sm font-medium transition"
+                >Home</a
+              >
+              <a
+                href="#features"
+                class="text-gray-300 hover:text-violet-400 px-3 py-2 rounded-md text-sm font-medium transition"
+                >Fitur</a
+              >
+              <a
+                href="anime.html"
+                class="text-gray-300 hover:text-violet-400 px-3 py-2 rounded-md text-sm font-medium transition"
+                >Library</a
+              >
             </div>
-        </div>
+          </div>
 
-        <!-- Mobile Menu Panel -->
-        <div id="mobile-menu" class="hidden md:hidden bg-black/95 border-b border-white/10">
-            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                <a href="#" class="text-white block px-3 py-2 rounded-md text-base font-medium">Home</a>
-                <a href="#features" class="text-gray-300 block px-3 py-2 rounded-md text-base font-medium">Fitur</a>
-                <a href="anime.html" class="text-gray-300 block px-3 py-2 rounded-md text-base font-medium">Library</a>
+          <!-- Auth Buttons (Desktop) - AKAN DI-UPDATE OTOMATIS -->
+          <div id="desktop-auth" class="hidden md:flex gap-4">
+            <!-- JavaScript akan mengisi ini -->
+          </div>
 
-                <!-- Mobile Auth Buttons - AKAN DI-UPDATE OTOMATIS -->
-                <div id="mobile-auth" class="pt-4 flex flex-col gap-3">
-                    <!-- JavaScript akan mengisi ini -->
-                </div>
-            </div>
+          <!-- Mobile menu button -->
+          <div class="-mr-2 flex md:hidden">
+            <button
+              onclick="toggleMenu()"
+              class="text-gray-400 hover:text-white inline-flex items-center justify-center p-2 rounded-md focus:outline-none"
+            >
+              <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+          </div>
         </div>
+      </div>
+
+      <!-- Mobile Menu Panel -->
+      <div
+        id="mobile-menu"
+        class="hidden md:hidden bg-black/95 border-b border-white/10"
+      >
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <a
+            href="#"
+            class="text-white block px-3 py-2 rounded-md text-base font-medium"
+            >Home</a
+          >
+          <a
+            href="#features"
+            class="text-gray-300 block px-3 py-2 rounded-md text-base font-medium"
+            >Fitur</a
+          >
+          <a
+            href="anime.html"
+            class="text-gray-300 block px-3 py-2 rounded-md text-base font-medium"
+            >Library</a
+          >
+
+          <!-- Mobile Auth Buttons - AKAN DI-UPDATE OTOMATIS -->
+          <div id="mobile-auth" class="pt-4 flex flex-col gap-3">
+            <!-- JavaScript akan mengisi ini -->
+          </div>
+        </div>
+      </div>
     </nav>
 
     <!-- Hero Section -->
     <header class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-        <div class="absolute inset-0 z-0 bg-grid h-full w-full"></div>
+      <div class="absolute inset-0 z-0 bg-grid h-full w-full"></div>
 
-        <!-- Abstract Glow Balls -->
+      <!-- Abstract Glow Balls -->
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-violet-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse"
+      ></div>
+      <div
+        class="absolute bottom-20 right-10 w-72 h-72 bg-cyan-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse"
+      ></div>
+
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center"
+      >
+        <h1
+          class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6"
+        >
+          Streaming Anime <br />
+          <span
+            class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 glow-text"
+            >Tanpa Batas dan Private</span
+          >
+        </h1>
+        <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400">
+          Platform streaming generasi baru dengan server pribadi. Nikmati
+          kecepatan tinggi, tanpa iklan, dan sistem gamifikasi yang mencatat
+          perjalanan wibu-mu.
+        </p>
+        <div class="mt-10 flex justify-center gap-4">
+          <a
+            href="anime.html"
+            class="btn-primary text-white px-8 py-4 rounded-full text-lg font-bold flex items-center gap-2"
+          >
+            <i data-lucide="play" class="w-5 h-5 fill-current"></i> Mulai
+            Menonton
+          </a>
+          <a
+            href="#features"
+            class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-4 rounded-full text-lg font-semibold transition flex items-center gap-2"
+          >
+            Pelajari Sistem
+          </a>
+        </div>
+
+        <!-- Stats -->
         <div
-            class="absolute top-20 left-10 w-72 h-72 bg-violet-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse">
-        </div>
-        <div
-            class="absolute bottom-20 right-10 w-72 h-72 bg-cyan-600 rounded-full mix-blend-multiply filter blur-[128px] opacity-20 animate-pulse">
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6">
-                Streaming Anime <br />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400 glow-text">Tanpa
-                    Batas dan Private</span>
-            </h1>
-            <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400">
-                Platform streaming generasi baru dengan server pribadi. Nikmati kecepatan tinggi, tanpa iklan, dan
-                sistem gamifikasi yang mencatat perjalanan wibu-mu.
-            </p>
-            <div class="mt-10 flex justify-center gap-4">
-                <a href="anime.html"
-                    class="btn-primary text-white px-8 py-4 rounded-full text-lg font-bold flex items-center gap-2">
-                    <i data-lucide="play" class="w-5 h-5 fill-current"></i> Mulai Menonton
-                </a>
-                <a href="#features"
-                    class="bg-white/5 hover:bg-white/10 border border-white/10 text-white px-8 py-4 rounded-full text-lg font-semibold transition flex items-center gap-2">
-                    Pelajari Sistem
-                </a>
+          class="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto border-t border-white/10 pt-8"
+        >
+          <div>
+            <div class="text-3xl font-bold text-white">4K+</div>
+            <div class="text-sm text-gray-500 uppercase tracking-widest">
+              Episode
             </div>
-
-            <!-- Stats -->
-            <div class="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto border-t border-white/10 pt-8">
-                <div>
-                    <div class="text-3xl font-bold text-white">4K+</div>
-                    <div class="text-sm text-gray-500 uppercase tracking-widest">Episode</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-bold text-white">0</div>
-                    <div class="text-sm text-gray-500 uppercase tracking-widest">Iklan</div>
-                </div>
-                <div>
-                    <div class="text-3xl font-bold text-white">Active</div>
-                    <div class="text-sm text-gray-500 uppercase tracking-widest">Community</div>
-                </div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-white">0</div>
+            <div class="text-sm text-gray-500 uppercase tracking-widest">
+              Iklan
             </div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-white">Active</div>
+            <div class="text-sm text-gray-500 uppercase tracking-widest">
+              Community
+            </div>
+          </div>
         </div>
+      </div>
     </header>
 
     <!-- Features Section -->
     <section id="features" class="py-20 bg-[#0a0a0c]">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Kenapa Annimverse?</h2>
-                <p class="text-gray-400">Dibangun dengan arsitektur modern untuk pengalaman maksimal.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <!-- Feature 1: Private Server -->
-                <div class="glow-box bg-[#0f0f11] p-8 rounded-2xl relative overflow-hidden group">
-                    <div
-                        class="absolute top-0 right-0 w-20 h-20 bg-violet-500/10 rounded-bl-full transition group-hover:bg-violet-500/20">
-                    </div>
-                    <i data-lucide="server" class="w-12 h-12 text-violet-500 mb-6"></i>
-                    <h3 class="text-xl font-bold text-white mb-3">Private Server Storage</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Konten disimpan di storage pribadi. Tidak bergantung pada host pihak ketiga, memastikan
-                        buffering minimal dan kualitas stabil.
-                    </p>
-                </div>
-
-                <!-- Feature 2: Gamifikasi -->
-                <div class="glow-box bg-[#0f0f11] p-8 rounded-2xl relative overflow-hidden group">
-                    <div
-                        class="absolute top-0 right-0 w-20 h-20 bg-cyan-500/10 rounded-bl-full transition group-hover:bg-cyan-500/20">
-                    </div>
-                    <i data-lucide="trophy" class="w-12 h-12 text-cyan-500 mb-6"></i>
-                    <h3 class="text-xl font-bold text-white mb-3">Sistem Gamifikasi</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Raih <strong>Badge</strong>, pertahankan <strong>Watching Streak</strong> harianmu, dan pamerkan
-                        progress menonton di profilmu.
-                    </p>
-                </div>
-
-                <!-- Feature 3: History & Sync -->
-                <div class="glow-box bg-[#0f0f11] p-8 rounded-2xl relative overflow-hidden group">
-                    <div
-                        class="absolute top-0 right-0 w-20 h-20 bg-pink-500/10 rounded-bl-full transition group-hover:bg-pink-500/20">
-                    </div>
-                    <i data-lucide="history" class="w-12 h-12 text-pink-500 mb-6"></i>
-                    <h3 class="text-xl font-bold text-white mb-3">Smart History</h3>
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        Melanjutkan episode secara otomatis. Sistem mengingat detik terakhir kamu menonton di perangkat
-                        manapun.
-                    </p>
-                </div>
-            </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+            Kenapa Annimverse?
+          </h2>
+          <p class="text-gray-400">
+            Dibangun dengan arsitektur modern untuk pengalaman maksimal.
+          </p>
         </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Feature 1: Private Server -->
+          <div
+            class="glow-box bg-[#0f0f11] p-8 rounded-2xl relative overflow-hidden group"
+          >
+            <div
+              class="absolute top-0 right-0 w-20 h-20 bg-violet-500/10 rounded-bl-full transition group-hover:bg-violet-500/20"
+            ></div>
+            <i data-lucide="server" class="w-12 h-12 text-violet-500 mb-6"></i>
+            <h3 class="text-xl font-bold text-white mb-3">
+              Private Server Storage
+            </h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              Konten disimpan di storage pribadi. Tidak bergantung pada host
+              pihak ketiga, memastikan buffering minimal dan kualitas stabil.
+            </p>
+          </div>
+
+          <!-- Feature 2: Gamifikasi -->
+          <div
+            class="glow-box bg-[#0f0f11] p-8 rounded-2xl relative overflow-hidden group"
+          >
+            <div
+              class="absolute top-0 right-0 w-20 h-20 bg-cyan-500/10 rounded-bl-full transition group-hover:bg-cyan-500/20"
+            ></div>
+            <i data-lucide="trophy" class="w-12 h-12 text-cyan-500 mb-6"></i>
+            <h3 class="text-xl font-bold text-white mb-3">Sistem Gamifikasi</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              Raih <strong>Badge</strong>, pertahankan
+              <strong>Watching Streak</strong> harianmu, dan pamerkan progress
+              menonton di profilmu.
+            </p>
+          </div>
+
+          <!-- Feature 3: History & Sync -->
+          <div
+            class="glow-box bg-[#0f0f11] p-8 rounded-2xl relative overflow-hidden group"
+          >
+            <div
+              class="absolute top-0 right-0 w-20 h-20 bg-pink-500/10 rounded-bl-full transition group-hover:bg-pink-500/20"
+            ></div>
+            <i data-lucide="history" class="w-12 h-12 text-pink-500 mb-6"></i>
+            <h3 class="text-xl font-bold text-white mb-3">Smart History</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              Melanjutkan episode secara otomatis. Sistem mengingat detik
+              terakhir kamu menonton di perangkat manapun.
+            </p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Trending / Library Preview -->
     <section id="library" class="py-20 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-end mb-10">
-                <div>
-                    <h2 class="text-3xl font-bold text-white">Sedang Trending</h2>
-                    <p class="text-gray-400 text-sm mt-1">Anime paling banyak ditonton minggu ini</p>
-                </div>
-                <a href="anime.html"
-                    class="text-violet-400 hover:text-white text-sm font-semibold flex items-center gap-1">
-                    Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                </a>
-            </div>
-
-            <!-- Grid Anime -->
-            <div id="trending-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                <!-- Dynamic Content / Skeleton Loaders -->
-                <!-- Card 1 -->
-                <div class="group relative rounded-xl overflow-hidden cursor-pointer">
-                    <img src="../storage/anime/thumbnails/frieren1.jpg" alt="Frieren"
-                        class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90">
-                    </div>
-                    <div class="absolute bottom-0 p-4 w-full">
-                        <span
-                            class="bg-violet-600 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block">EP
-                            24</span>
-                        <h3 class="text-white font-bold truncate group-hover:text-violet-400 transition">Sousou no
-                            Frieren</h3>
-                        <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
-                            <span class="flex items-center gap-1"><i data-lucide="star"
-                                    class="w-3 h-3 text-yellow-500"></i> 9.8</span>
-                            <span>• Fantasy</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 2 -->
-                <div class="group relative rounded-xl overflow-hidden cursor-pointer">
-                    <img src="../storage/anime/thumbnails/solo-leveling1.jpg" alt="Solo Leveling"
-                        class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90">
-                    </div>
-                    <div class="absolute bottom-0 p-4 w-full">
-                        <span class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block">EP
-                            08</span>
-                        <h3 class="text-white font-bold truncate group-hover:text-red-400 transition">Solo Leveling</h3>
-                        <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
-                            <span class="flex items-center gap-1"><i data-lucide="star"
-                                    class="w-3 h-3 text-yellow-500"></i> 9.5</span>
-                            <span>• Action</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 3 -->
-                <div class="group relative rounded-xl overflow-hidden cursor-pointer">
-                    <img src="https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg" alt="Your Name"
-                        class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90">
-                    </div>
-                    <div class="absolute bottom-0 p-4 w-full">
-                        <span
-                            class="bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block">MOVIE</span>
-                        <h3 class="text-white font-bold truncate group-hover:text-green-400 transition">Your Name</h3>
-                        <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
-                            <span class="flex items-center gap-1"><i data-lucide="star"
-                                    class="w-3 h-3 text-yellow-500"></i> 9.9</span>
-                            <span>• Romance</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Card 4 -->
-                <div class="group relative rounded-xl overflow-hidden cursor-pointer">
-                    <img src="../storage/anime/thumbnails/spy-x-family1.jpg" alt="Spy x Family"
-                        class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90">
-                    </div>
-                    <div class="absolute bottom-0 p-4 w-full">
-                        <span
-                            class="bg-orange-600 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block">S2
-                            EP 12</span>
-                        <h3 class="text-white font-bold truncate group-hover:text-orange-400 transition">Spy x Family
-                        </h3>
-                        <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
-                            <span class="flex items-center gap-1"><i data-lucide="star"
-                                    class="w-3 h-3 text-yellow-500"></i> 9.2</span>
-                            <span>• Comedy</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-end mb-10">
+          <div>
+            <h2 class="text-3xl font-bold text-white">Sedang Trending</h2>
+            <p class="text-gray-400 text-sm mt-1">
+              Anime paling banyak ditonton minggu ini
+            </p>
+          </div>
+          <a
+            href="anime.html"
+            class="text-violet-400 hover:text-white text-sm font-semibold flex items-center gap-1"
+          >
+            Lihat Semua <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </a>
         </div>
+
+        <!-- Grid Anime -->
+        <div
+          id="trending-grid"
+          class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6"
+        >
+          <!-- Dynamic Content / Skeleton Loaders -->
+          <!-- Card 1 -->
+          <div class="group relative rounded-xl overflow-hidden cursor-pointer">
+            <img
+              src="../storage/anime/thumbnails/frieren1.jpg"
+              alt="Frieren"
+              class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90"
+            ></div>
+            <div class="absolute bottom-0 p-4 w-full">
+              <span
+                class="bg-violet-600 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block"
+                >EP 24</span
+              >
+              <h3
+                class="text-white font-bold truncate group-hover:text-violet-400 transition"
+              >
+                Sousou no Frieren
+              </h3>
+              <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                <span class="flex items-center gap-1"
+                  ><i data-lucide="star" class="w-3 h-3 text-yellow-500"></i>
+                  9.8</span
+                >
+                <span>• Fantasy</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="group relative rounded-xl overflow-hidden cursor-pointer">
+            <img
+              src="../storage/anime/thumbnails/solo-leveling1.jpg"
+              alt="Solo Leveling"
+              class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90"
+            ></div>
+            <div class="absolute bottom-0 p-4 w-full">
+              <span
+                class="bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block"
+                >EP 08</span
+              >
+              <h3
+                class="text-white font-bold truncate group-hover:text-red-400 transition"
+              >
+                Solo Leveling
+              </h3>
+              <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                <span class="flex items-center gap-1"
+                  ><i data-lucide="star" class="w-3 h-3 text-yellow-500"></i>
+                  9.5</span
+                >
+                <span>• Action</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="group relative rounded-xl overflow-hidden cursor-pointer">
+            <img
+              src="https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg"
+              alt="Your Name"
+              class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90"
+            ></div>
+            <div class="absolute bottom-0 p-4 w-full">
+              <span
+                class="bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block"
+                >MOVIE</span
+              >
+              <h3
+                class="text-white font-bold truncate group-hover:text-green-400 transition"
+              >
+                Your Name
+              </h3>
+              <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                <span class="flex items-center gap-1"
+                  ><i data-lucide="star" class="w-3 h-3 text-yellow-500"></i>
+                  9.9</span
+                >
+                <span>• Romance</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="group relative rounded-xl overflow-hidden cursor-pointer">
+            <img
+              src="../storage/anime/thumbnails/spy-x-family1.jpg"
+              alt="Spy x Family"
+              class="w-full h-[300px] object-cover transition duration-500 group-hover:scale-110"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90"
+            ></div>
+            <div class="absolute bottom-0 p-4 w-full">
+              <span
+                class="bg-orange-600 text-white text-[10px] font-bold px-2 py-1 rounded mb-2 inline-block"
+                >S2 EP 12</span
+              >
+              <h3
+                class="text-white font-bold truncate group-hover:text-orange-400 transition"
+              >
+                Spy x Family
+              </h3>
+              <div class="flex items-center gap-2 mt-1 text-xs text-gray-400">
+                <span class="flex items-center gap-1"
+                  ><i data-lucide="star" class="w-3 h-3 text-yellow-500"></i>
+                  9.2</span
+                >
+                <span>• Comedy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Footer -->
     <footer class="border-t border-white/10 bg-[#020202] pt-10 pb-6">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div class="flex items-center justify-center gap-2 mb-4">
-                <i data-lucide="play-circle" class="text-violet-600 w-6 h-6"></i>
-                <span class="font-bold text-xl text-white">ANNIMVERSE</span>
-            </div>
-            <p class="text-gray-500 text-sm mb-6">Private Anime Streaming Platform dengan Sistem Gamifikasi
-                Terintegrasi.</p>
-            <div class="text-gray-600 text-xs">
-                &copy; 2024 Annimverse Project. All rights reserved.
-            </div>
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="flex items-center justify-center gap-2 mb-4">
+          <i data-lucide="play-circle" class="text-violet-600 w-6 h-6"></i>
+          <span class="font-bold text-xl text-white">ANNIMVERSE</span>
         </div>
+        <p class="text-gray-500 text-sm mb-6">
+          Private Anime Streaming Platform dengan Sistem Gamifikasi
+          Terintegrasi.
+        </p>
+        <div class="text-gray-600 text-xs">
+          &copy; 2024 Annimverse Project. All rights reserved.
+        </div>
+      </div>
     </footer>
 
     <!-- ========================================= -->
     <!-- SCRIPT UTAMA: DETEKSI LOGIN & UPDATE UI -->
     <!-- ========================================= -->
     <script>
-        // Init Lucide Icons
-        lucide.createIcons();
+      // Init Lucide Icons
+      lucide.createIcons();
 
-        // ✅ FUNGSI UTAMA: UPDATE NAVBAR BERDASARKAN STATUS LOGIN
-        function updateAuthUI() {
-            const token = localStorage.getItem('token');
-            const userStr = localStorage.getItem('user');
+      // ✅ FUNGSI UTAMA: UPDATE NAVBAR BERDASARKAN STATUS LOGIN
+      function updateAuthUI() {
+        const token = localStorage.getItem("token");
+        const userStr = localStorage.getItem("user");
 
-            const desktopAuth = document.getElementById('desktop-auth');
-            const mobileAuth = document.getElementById('mobile-auth');
+        const desktopAuth = document.getElementById("desktop-auth");
+        const mobileAuth = document.getElementById("mobile-auth");
 
-            if (token && userStr) {
-                // ========================================
-                // USER SUDAH LOGIN
-                // ========================================
-                const user = JSON.parse(userStr);
+        if (token && userStr) {
+          // ========================================
+          // USER SUDAH LOGIN
+          // ========================================
+          const user = JSON.parse(userStr);
 
-                // DESKTOP: Tampilkan Dashboard + Username
-                desktopAuth.innerHTML = `
+          // DESKTOP: Tampilkan Dashboard + Username
+          desktopAuth.innerHTML = `
                     <a href="menu.html" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition flex items-center gap-2">
                         <i data-lucide="layout-grid" class="w-4 h-4"></i> Dashboard
                     </a>
@@ -408,8 +540,8 @@
                     </a>
                 `;
 
-                // MOBILE: Tampilkan Dashboard + Profil
-                mobileAuth.innerHTML = `
+          // MOBILE: Tampilkan Dashboard + Profil
+          mobileAuth.innerHTML = `
                     <a href="menu.html" class="w-full text-left px-3 py-2 text-gray-300 font-medium rounded-md hover:bg-white/10 transition flex items-center gap-2">
                         <i data-lucide="layout-grid" class="w-4 h-4"></i> Dashboard
                     </a>
@@ -417,38 +549,36 @@
                         <i data-lucide="user" class="w-4 h-4"></i> ${user.username}
                     </a>
                 `;
+        } else {
+          // ========================================
+          // USER BELUM LOGIN
+          // ========================================
 
-            } else {
-                // ========================================
-                // USER BELUM LOGIN
-                // ========================================
-
-                // DESKTOP: Tampilkan Masuk & Daftar
-                desktopAuth.innerHTML = `
+          // DESKTOP: Tampilkan Masuk & Daftar
+          desktopAuth.innerHTML = `
                     <a href="login.html" class="text-gray-300 hover:text-white px-3 py-2 text-sm font-medium transition">Masuk</a>
                     <a href="register.html" class="btn-primary text-white px-5 py-2 rounded-full text-sm font-bold shadow-lg">Daftar Sekarang</a>
                 `;
 
-                // MOBILE: Tampilkan Masuk & Daftar
-                mobileAuth.innerHTML = `
+          // MOBILE: Tampilkan Masuk & Daftar
+          mobileAuth.innerHTML = `
                     <a href="login.html" class"w-full text-left px-3 text-gray-300 font-medium">Masuk</a>
                     <a href="register.html" class="w-full btn-primary text-white px-3 py-2 rounded-lg font-bold">Daftar</a>
                 `;
-            }
-
-            // Re-render icon Lucide setelah HTML berubah
-            lucide.createIcons();
         }
 
-        // Toggle Mobile Menu
-        function toggleMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
+        // Re-render icon Lucide setelah HTML berubah
+        lucide.createIcons();
+      }
 
-        // ✅ JALANKAN SAAT HALAMAN DIMUAT
-        updateAuthUI();
+      // Toggle Mobile Menu
+      function toggleMenu() {
+        const menu = document.getElementById("mobile-menu");
+        menu.classList.toggle("hidden");
+      }
+
+      // ✅ JALANKAN SAAT HALAMAN DIMUAT
+      updateAuthUI();
     </script>
-</body>
-
+  </body>
 </html>

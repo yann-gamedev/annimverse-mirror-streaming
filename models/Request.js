@@ -1,53 +1,60 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const requestSchema = new mongoose.Schema({
+const requestSchema = new mongoose.Schema(
+  {
     userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     animeTitle: {
-        type: String,
-        required: true,
-        trim: true
+      type: String,
+      required: true,
+      trim: true,
     },
     description: {
-        type: String,
-        trim: true,
-        maxlength: 500
+      type: String,
+      trim: true,
+      maxlength: 500,
     },
     malId: {
-        type: String,
-        trim: true
+      type: String,
+      trim: true,
     },
     status: {
-        type: String,
-        enum: ['pending', 'approved', 'rejected', 'completed'],
-        default: 'pending'
+      type: String,
+      enum: ["pending", "approved", "rejected", "completed"],
+      default: "pending",
     },
-    upvotes: [{
+    upvotes: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
-    downvotes: [{
+        ref: "User",
+      },
+    ],
+    downvotes: [
+      {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }],
+        ref: "User",
+      },
+    ],
     adminNote: {
-        type: String,
-        trim: true
-    }
-}, {
-    timestamps: true
-});
+      type: String,
+      trim: true,
+    },
+  },
+  {
+    timestamps: true,
+  },
+);
 
 // Virtual for vote count
-requestSchema.virtual('voteCount').get(function () {
-    return this.upvotes.length - this.downvotes.length;
+requestSchema.virtual("voteCount").get(function () {
+  return this.upvotes.length - this.downvotes.length;
 });
 
 // Ensure virtuals are included when converting to JSON
-requestSchema.set('toJSON', { virtuals: true });
-requestSchema.set('toObject', { virtuals: true });
+requestSchema.set("toJSON", { virtuals: true });
+requestSchema.set("toObject", { virtuals: true });
 
-module.exports = mongoose.model('Request', requestSchema);
+module.exports = mongoose.model("Request", requestSchema);

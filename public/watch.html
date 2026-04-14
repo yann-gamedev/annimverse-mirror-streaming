@@ -1,214 +1,288 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nonton Anime - ANNIMVERSE</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="js/guard.js"></script>
 
     <style>
-        :root { --primary-glow: #8b5cf6; --bg-dark: #050505; }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-dark); color: #e0e0e0; }
+      :root {
+        --primary-glow: #8b5cf6;
+        --bg-dark: #050505;
+      }
+      body {
+        font-family: "Outfit", sans-serif;
+        background-color: var(--bg-dark);
+        color: #e0e0e0;
+      }
 
-        .video-container {
-            box-shadow: 0 0 30px rgba(139, 92, 246, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .btn-like.liked {
-            color: var(--primary-glow);
-            background: rgba(139, 92, 246, 0.1);
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
-        }
-        .btn-like.liked svg { fill: currentColor; }
+      .video-container {
+        box-shadow: 0 0 30px rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-        .comment-box:focus-within {
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
-        }
+      .btn-like.liked {
+        color: var(--primary-glow);
+        background: rgba(139, 92, 246, 0.1);
+        border-color: var(--primary-glow);
+        box-shadow: 0 0 15px rgba(139, 92, 246, 0.3);
+      }
+      .btn-like.liked svg {
+        fill: currentColor;
+      }
 
-        .eps-btn.active {
-            background-color: #7c3aed;
-            border-color: #8b5cf6;
-            color: white;
-            box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
-        }
+      .comment-box:focus-within {
+        border-color: var(--primary-glow);
+        box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+      }
 
-        /* Animasi XP Melayang */
-        @keyframes floatUp { 
-            0% { opacity: 1; transform: translateY(0); } 
-            100% { opacity: 0; transform: translateY(-50px); } 
+      .eps-btn.active {
+        background-color: #7c3aed;
+        border-color: #8b5cf6;
+        color: white;
+        box-shadow: 0 0 10px rgba(124, 58, 237, 0.5);
+      }
+
+      /* Animasi XP Melayang */
+      @keyframes floatUp {
+        0% {
+          opacity: 1;
+          transform: translateY(0);
         }
+        100% {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+      }
     </style>
-</head>
-<body class="pb-20">
-
-    <nav class="flex items-center gap-4 p-4 border-b border-white/10 bg-[#050505]/90 sticky top-0 z-50 backdrop-blur-md">
-        <a id="back-link" href="#" class="text-gray-400 hover:text-white transition">
-            <i data-lucide="arrow-left" class="w-6 h-6"></i>
-        </a>
-        <div class="leading-tight">
-            <h1 id="player-title" class="text-sm font-bold text-white line-clamp-1">Memuat...</h1>
-            <p id="player-eps" class="text-xs text-violet-400">...</p>
-        </div>
+  </head>
+  <body class="pb-20">
+    <nav
+      class="flex items-center gap-4 p-4 border-b border-white/10 bg-[#050505]/90 sticky top-0 z-50 backdrop-blur-md"
+    >
+      <a
+        id="back-link"
+        href="#"
+        class="text-gray-400 hover:text-white transition"
+      >
+        <i data-lucide="arrow-left" class="w-6 h-6"></i>
+      </a>
+      <div class="leading-tight">
+        <h1 id="player-title" class="text-sm font-bold text-white line-clamp-1">
+          Memuat...
+        </h1>
+        <p id="player-eps" class="text-xs text-violet-400">...</p>
+      </div>
     </nav>
 
     <div class="w-full bg-black sticky top-[60px] z-40">
-        <div class="video-container aspect-video w-full max-w-5xl mx-auto relative bg-black">
-            <video id="main-video" controls class="w-full h-full">
-                <!-- Placeholder -->
-                <source id="video-source" src="" type="video/mp4">
-                Browser Anda tidak mendukung video tag.
-            </video>
-        </div>
+      <div
+        class="video-container aspect-video w-full max-w-5xl mx-auto relative bg-black"
+      >
+        <video id="main-video" controls class="w-full h-full">
+          <!-- Placeholder -->
+          <source id="video-source" src="" type="video/mp4" />
+          Browser Anda tidak mendukung video tag.
+        </video>
+      </div>
     </div>
 
     <main class="max-w-5xl mx-auto px-4 py-4">
-        
-        <div class="flex justify-between items-center mb-6">
-            <button type="button" id="btn-prev" class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/5 transition">
-                <i data-lucide="skip-back" class="w-4 h-4"></i> Prev
-            </button>
-            
-            <button type="button" id="btn-like" onclick="doLike()" class="btn-like flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-gray-400 hover:text-white transition group">
-                <i data-lucide="thumbs-up" class="w-5 h-5 transition-transform group-active:scale-125"></i>
-                <span id="like-count" class="text-sm font-bold">0</span>
-            </button>
+      <div class="flex justify-between items-center mb-6">
+        <button
+          type="button"
+          id="btn-prev"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg border border-white/10 text-sm text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/5 transition"
+        >
+          <i data-lucide="skip-back" class="w-4 h-4"></i> Prev
+        </button>
 
-            <button type="button" id="btn-next" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-sm text-white font-bold shadow-lg shadow-violet-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition">
-                Next <i data-lucide="skip-forward" class="w-4 h-4"></i>
-            </button>
+        <button
+          type="button"
+          id="btn-like"
+          onclick="doLike()"
+          class="btn-like flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 text-gray-400 hover:text-white transition group"
+        >
+          <i
+            data-lucide="thumbs-up"
+            class="w-5 h-5 transition-transform group-active:scale-125"
+          ></i>
+          <span id="like-count" class="text-sm font-bold">0</span>
+        </button>
+
+        <button
+          type="button"
+          id="btn-next"
+          class="flex items-center gap-2 px-4 py-2 rounded-lg bg-violet-600 hover:bg-violet-700 text-sm text-white font-bold shadow-lg shadow-violet-500/20 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        >
+          Next <i data-lucide="skip-forward" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="mb-8 border-b border-white/10 pb-6">
+        <h2 id="eps-title" class="text-lg font-bold text-white mb-2">...</h2>
+        <div class="flex items-center gap-4 text-xs text-gray-500">
+          <span class="flex items-center gap-1"
+            ><i data-lucide="eye" class="w-3 h-3"></i>
+            <span id="view-count">0</span> Views</span
+          >
+          <span>•</span>
+          <span>Server Utama</span>
+        </div>
+      </div>
+
+      <section class="max-w-3xl">
+        <h3 class="font-bold text-white mb-4 flex items-center gap-2">
+          <i data-lucide="message-square" class="w-4 h-4 text-violet-500"></i>
+          Komentar
+        </h3>
+
+        <div class="flex gap-3 mb-8">
+          <img
+            id="my-avatar"
+            src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            class="w-10 h-10 rounded-full border border-white/10 bg-gray-800 object-cover"
+          />
+          <div class="flex-1">
+            <div
+              class="comment-box bg-[#1a1a1d] border border-white/10 rounded-xl p-2 transition"
+            >
+              <textarea
+                id="comment-input"
+                rows="2"
+                placeholder="Tulis komentar kamu..."
+                class="w-full bg-transparent text-sm text-white outline-none resize-none placeholder-gray-600"
+              ></textarea>
+              <div class="flex justify-end mt-2">
+                <button
+                  type="button"
+                  onclick="sendComment()"
+                  class="bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold px-4 py-1.5 rounded-lg transition"
+                >
+                  Kirim
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="mb-8 border-b border-white/10 pb-6">
-            <h2 id="eps-title" class="text-lg font-bold text-white mb-2">...</h2>
-            <div class="flex items-center gap-4 text-xs text-gray-500">
-                <span class="flex items-center gap-1"><i data-lucide="eye" class="w-3 h-3"></i> <span id="view-count">0</span> Views</span>
-                <span>•</span>
-                <span>Server Utama</span>
-            </div>
+        <div
+          id="comment-list"
+          class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar"
+        >
+          <p class="text-gray-500 text-sm italic">Memuat komentar...</p>
         </div>
+      </section>
 
-        <section class="max-w-3xl">
-            <h3 class="font-bold text-white mb-4 flex items-center gap-2">
-                <i data-lucide="message-square" class="w-4 h-4 text-violet-500"></i> Komentar
-            </h3>
-
-            <div class="flex gap-3 mb-8">
-                <img id="my-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="w-10 h-10 rounded-full border border-white/10 bg-gray-800 object-cover">
-                <div class="flex-1">
-                    <div class="comment-box bg-[#1a1a1d] border border-white/10 rounded-xl p-2 transition">
-                        <textarea id="comment-input" rows="2" placeholder="Tulis komentar kamu..." class="w-full bg-transparent text-sm text-white outline-none resize-none placeholder-gray-600"></textarea>
-                        <div class="flex justify-end mt-2">
-                            <button type="button" onclick="sendComment()" class="bg-violet-600 hover:bg-violet-700 text-white text-xs font-bold px-4 py-1.5 rounded-lg transition">Kirim</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="comment-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
-                <p class="text-gray-500 text-sm italic">Memuat komentar...</p>
-            </div>
-        </section>
-
-        <div class="mt-12 pt-6 border-t border-white/10">
-            <h3 class="font-bold text-white mb-4 flex items-center gap-2">
-                <i data-lucide="list" class="w-4 h-4 text-violet-500"></i> Episode Lainnya
-            </h3>
-            <div id="episode-grid" class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3"></div>
-        </div>
+      <div class="mt-12 pt-6 border-t border-white/10">
+        <h3 class="font-bold text-white mb-4 flex items-center gap-2">
+          <i data-lucide="list" class="w-4 h-4 text-violet-500"></i> Episode
+          Lainnya
+        </h3>
+        <div
+          id="episode-grid"
+          class="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3"
+        ></div>
+      </div>
     </main>
 
     <script>
-        lucide.createIcons();
-        
-        let currentEpsId = null;
-        const user = JSON.parse(localStorage.getItem('user'));
+      lucide.createIcons();
 
-        if(user) {
-            document.getElementById('my-avatar').src = user.avatar || `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`;
+      let currentEpsId = null;
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (user) {
+        document.getElementById("my-avatar").src =
+          user.avatar ||
+          `https://ui-avatars.com/api/?name=${user.username}&background=random&color=fff`;
+      }
+
+      async function loadPlayer() {
+        const params = new URLSearchParams(window.location.search);
+        const slug = params.get("slug");
+        const eps = parseInt(params.get("eps")) || 1;
+
+        if (!slug) return (window.location.href = "menu.html");
+
+        try {
+          const resWatch = await fetch(`/api/anime/${slug}/watch/${eps}`);
+          if (!resWatch.ok) throw new Error("Episode tidak ditemukan");
+          const data = await resWatch.json();
+
+          currentEpsId = data.episode._id;
+
+          // [PENTING] Rekam History + XP di sini
+          recordHistory(data.anime._id, data.episode._id);
+
+          document.title = `Nonton ${data.anime.title} - Eps ${eps}`;
+          document.getElementById("player-title").innerText = data.anime.title;
+          document.getElementById("player-eps").innerText = `Episode ${eps}`;
+          document.getElementById("eps-title").innerText =
+            data.episode.title || `Episode ${eps}`;
+          document.getElementById("back-link").href =
+            `detail.html?slug=${slug}`;
+          document.getElementById("view-count").innerText = data.episode.views;
+
+          const videoEl = document.getElementById("main-video");
+          videoEl.src = `/api/stream/${data.episode._id}`;
+          videoEl.poster = data.anime.posterUrl;
+
+          const likeCount = data.episode.likes ? data.episode.likes.length : 0;
+          document.getElementById("like-count").innerText = likeCount;
+          if (data.episode.likes && data.episode.likes.includes(user.id)) {
+            document.getElementById("btn-like").classList.add("liked");
+          }
+
+          loadComments(currentEpsId);
+
+          const resList = await fetch(`/api/anime/${slug}/episodes`);
+          const allEpisodes = await resList.json();
+          renderPlaylist(allEpisodes, eps, slug);
+          setupNavButtons(eps, allEpisodes.length, slug);
+        } catch (error) {
+          console.error(error);
+          // Fail silent agar user tidak terganggu
         }
+      }
 
-        async function loadPlayer() {
-            const params = new URLSearchParams(window.location.search);
-            const slug = params.get('slug');
-            const eps = parseInt(params.get('eps')) || 1;
+      // --- FUNGSI REKAM HISTORY & XP ---
+      async function recordHistory(animeId, episodeId) {
+        if (!user) return;
+        try {
+          const res = await fetch("/api/interact/history", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({ userId: user.id, animeId, episodeId }),
+          });
 
-            if (!slug) return window.location.href = 'menu.html';
+          const data = await res.json();
 
-            try {
-                const resWatch = await fetch(`/api/anime/${slug}/watch/${eps}`);
-                if (!resWatch.ok) throw new Error("Episode tidak ditemukan");
-                const data = await resWatch.json();
-
-                currentEpsId = data.episode._id;
-
-                // [PENTING] Rekam History + XP di sini
-                recordHistory(data.anime._id, data.episode._id);
-
-                document.title = `Nonton ${data.anime.title} - Eps ${eps}`;
-                document.getElementById('player-title').innerText = data.anime.title;
-                document.getElementById('player-eps').innerText = `Episode ${eps}`;
-                document.getElementById('eps-title').innerText = data.episode.title || `Episode ${eps}`;
-                document.getElementById('back-link').href = `detail.html?slug=${slug}`;
-                document.getElementById('view-count').innerText = data.episode.views;
-
-                const videoEl = document.getElementById('main-video');
-                videoEl.src = `/api/stream/${data.episode._id}`; 
-                videoEl.poster = data.anime.posterUrl;
-
-                const likeCount = data.episode.likes ? data.episode.likes.length : 0;
-                document.getElementById('like-count').innerText = likeCount;
-                if (data.episode.likes && data.episode.likes.includes(user.id)) {
-                    document.getElementById('btn-like').classList.add('liked');
-                }
-
-                loadComments(currentEpsId);
-                
-                const resList = await fetch(`/api/anime/${slug}/episodes`);
-                const allEpisodes = await resList.json();
-                renderPlaylist(allEpisodes, eps, slug);
-                setupNavButtons(eps, allEpisodes.length, slug);
-
-            } catch (error) {
-                console.error(error);
-                // Fail silent agar user tidak terganggu
-            }
+          // [BARU] Tampilkan Notifikasi XP jika ada penambahan
+          if (data.xpGained) {
+            showFloatingXP(data.xpGained);
+          }
+        } catch (err) {
+          console.error("Gagal rekam history", err);
         }
+      }
 
-        // --- FUNGSI REKAM HISTORY & XP ---
-        async function recordHistory(animeId, episodeId) {
-            if (!user) return;
-            try {
-                const res = await fetch('/api/interact/history', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    },
-                    body: JSON.stringify({ userId: user.id, animeId, episodeId })
-                });
-                
-                const data = await res.json();
-                
-                // [BARU] Tampilkan Notifikasi XP jika ada penambahan
-                if (data.xpGained) {
-                    showFloatingXP(data.xpGained);
-                }
-
-            } catch (err) { console.error("Gagal rekam history", err); }
-        }
-
-        // --- EFEK VISUAL XP ---
-        function showFloatingXP(amount) {
-            const el = document.createElement('div');
-            el.innerText = `+${amount} XP`;
-            el.style.cssText = `
+      // --- EFEK VISUAL XP ---
+      function showFloatingXP(amount) {
+        const el = document.createElement("div");
+        el.innerText = `+${amount} XP`;
+        el.style.cssText = `
                 position: fixed; top: 15%; right: 20px;
                 background: linear-gradient(90deg, #8b5cf6, #2563eb); 
                 color: white; padding: 10px 20px;
@@ -217,50 +291,54 @@
                 box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
                 border: 1px solid rgba(255,255,255,0.2);
             `;
-            document.body.appendChild(el);
-            setTimeout(() => el.remove(), 2000);
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 2000);
+      }
+
+      async function doLike() {
+        if (!currentEpsId) return;
+        const btn = document.getElementById("btn-like");
+        const countSpan = document.getElementById("like-count");
+        const isLiked = btn.classList.contains("liked");
+        let count = parseInt(countSpan.innerText);
+
+        if (isLiked) {
+          btn.classList.remove("liked");
+          countSpan.innerText = count - 1;
+        } else {
+          btn.classList.add("liked");
+          countSpan.innerText = count + 1;
         }
 
-        async function doLike() {
-            if(!currentEpsId) return;
-            const btn = document.getElementById('btn-like');
-            const countSpan = document.getElementById('like-count');
-            const isLiked = btn.classList.contains('liked');
-            let count = parseInt(countSpan.innerText);
-            
-            if(isLiked) {
-                btn.classList.remove('liked');
-                countSpan.innerText = count - 1;
-            } else {
-                btn.classList.add('liked');
-                countSpan.innerText = count + 1;
-            }
-
-            try {
-                await fetch('/api/interact/like', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ episodeId: currentEpsId, userId: user.id })
-                });
-            } catch (err) {
-                if(isLiked) btn.classList.add('liked'); else btn.classList.remove('liked');
-            }
+        try {
+          await fetch("/api/interact/like", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ episodeId: currentEpsId, userId: user.id }),
+          });
+        } catch (err) {
+          if (isLiked) btn.classList.add("liked");
+          else btn.classList.remove("liked");
         }
+      }
 
-        async function loadComments(epsId) {
-            try {
-                const res = await fetch(`/api/interact/comment/${epsId}`);
-                const comments = await res.json();
-                const list = document.getElementById('comment-list');
-                list.innerHTML = ''; 
-                if(comments.length === 0) {
-                    list.innerHTML = '<p class="text-gray-500 text-sm italic">Jadilah yang pertama berkomentar!</p>';
-                    return;
-                }
-                comments.forEach(c => {
-                    const date = new Date(c.createdAt).toLocaleDateString();
-                    const avatar = c.user.avatar || `https://ui-avatars.com/api/?name=${c.user.username}&background=random`;
-                    list.innerHTML += `
+      async function loadComments(epsId) {
+        try {
+          const res = await fetch(`/api/interact/comment/${epsId}`);
+          const comments = await res.json();
+          const list = document.getElementById("comment-list");
+          list.innerHTML = "";
+          if (comments.length === 0) {
+            list.innerHTML =
+              '<p class="text-gray-500 text-sm italic">Jadilah yang pertama berkomentar!</p>';
+            return;
+          }
+          comments.forEach((c) => {
+            const date = new Date(c.createdAt).toLocaleDateString();
+            const avatar =
+              c.user.avatar ||
+              `https://ui-avatars.com/api/?name=${c.user.username}&background=random`;
+            list.innerHTML += `
                         <div class="flex gap-3 items-start border-b border-white/5 pb-3">
                             <img src="${avatar}" class="w-8 h-8 rounded-full bg-gray-800 shrink-0 object-cover">
                             <div>
@@ -271,53 +349,67 @@
                                 <p class="text-sm text-gray-400 mt-0.5 leading-relaxed">${c.text}</p>
                             </div>
                         </div>`;
-                });
-            } catch (err) { console.error("Gagal load komen"); }
+          });
+        } catch (err) {
+          console.error("Gagal load komen");
         }
+      }
 
-        async function sendComment() {
-            const input = document.getElementById('comment-input');
-            const text = input.value.trim();
-            if(!text) return;
-            try {
-                const res = await fetch('/api/interact/comment', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ episodeId: currentEpsId, userId: user.id, text })
-                });
-                if(res.ok) { input.value = ''; loadComments(currentEpsId); }
-            } catch (err) { alert("Gagal kirim komentar"); }
+      async function sendComment() {
+        const input = document.getElementById("comment-input");
+        const text = input.value.trim();
+        if (!text) return;
+        try {
+          const res = await fetch("/api/interact/comment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              episodeId: currentEpsId,
+              userId: user.id,
+              text,
+            }),
+          });
+          if (res.ok) {
+            input.value = "";
+            loadComments(currentEpsId);
+          }
+        } catch (err) {
+          alert("Gagal kirim komentar");
         }
+      }
 
-        function renderPlaylist(episodes, currentEps, slug) {
-            const grid = document.getElementById('episode-grid');
-            grid.innerHTML = '';
-            episodes.forEach(ep => {
-                const isActive = ep.episodeNumber === currentEps ? 'active' : 'bg-[#1a1a1d] text-gray-400 border-white/5 hover:bg-white/10';
-                grid.innerHTML += `
+      function renderPlaylist(episodes, currentEps, slug) {
+        const grid = document.getElementById("episode-grid");
+        grid.innerHTML = "";
+        episodes.forEach((ep) => {
+          const isActive =
+            ep.episodeNumber === currentEps
+              ? "active"
+              : "bg-[#1a1a1d] text-gray-400 border-white/5 hover:bg-white/10";
+          grid.innerHTML += `
                     <a href="watch.html?slug=${slug}&eps=${ep.episodeNumber}" 
                        class="eps-btn ${isActive} border rounded-lg py-3 flex flex-col items-center justify-center transition group">
                         <span class="text-xs font-bold">Eps ${ep.episodeNumber}</span>
                     </a>`;
-            });
-        }
+        });
+      }
 
-        function setupNavButtons(currentEps, total, slug) {
-            const btnPrev = document.getElementById('btn-prev');
-            const btnNext = document.getElementById('btn-next');
-            if (currentEps > 1) {
-                btnPrev.disabled = false;
-                btnPrev.onclick = () => window.location.href = `watch.html?slug=${slug}&eps=${currentEps - 1}`;
-            } else btnPrev.disabled = true;
-            if (currentEps < total) {
-                btnNext.disabled = false;
-                btnNext.onclick = () => window.location.href = `watch.html?slug=${slug}&eps=${currentEps + 1}`;
-            } else btnNext.disabled = true;
-        }
+      function setupNavButtons(currentEps, total, slug) {
+        const btnPrev = document.getElementById("btn-prev");
+        const btnNext = document.getElementById("btn-next");
+        if (currentEps > 1) {
+          btnPrev.disabled = false;
+          btnPrev.onclick = () =>
+            (window.location.href = `watch.html?slug=${slug}&eps=${currentEps - 1}`);
+        } else btnPrev.disabled = true;
+        if (currentEps < total) {
+          btnNext.disabled = false;
+          btnNext.onclick = () =>
+            (window.location.href = `watch.html?slug=${slug}&eps=${currentEps + 1}`);
+        } else btnNext.disabled = true;
+      }
 
-        loadPlayer();
+      loadPlayer();
     </script>
-</body>
+  </body>
 </html>
-
-

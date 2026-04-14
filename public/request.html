@@ -1,391 +1,448 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Request Anime - ANNIMVERSE</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
-        body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #050505;
-            color: #e0e0e0;
-        }
+      body {
+        font-family: "Outfit", sans-serif;
+        background-color: #050505;
+        color: #e0e0e0;
+      }
 
-        .status-badge {
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+      .status-badge {
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
 
-        .status-pending {
-            background: rgba(251, 191, 36, 0.2);
-            color: #fbbf24;
-        }
+      .status-pending {
+        background: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+      }
 
-        .status-approved {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-        }
+      .status-approved {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+      }
 
-        .status-rejected {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
+      .status-rejected {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
 
-        .status-completed {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-        }
+      .status-completed {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+      }
 
-        .vote-btn {
-            transition: all 0.3s ease;
-        }
+      .vote-btn {
+        transition: all 0.3s ease;
+      }
 
-        .vote-btn:hover {
-            transform: scale(1.1);
-        }
+      .vote-btn:hover {
+        transform: scale(1.1);
+      }
 
-        .vote-btn.active {
-            opacity: 1;
-        }
+      .vote-btn.active {
+        opacity: 1;
+      }
 
-        .vote-btn.inactive {
-            opacity: 0.4;
-        }
+      .vote-btn.inactive {
+        opacity: 0.4;
+      }
     </style>
-</head>
+  </head>
 
-<body class="pb-24">
-
+  <body class="pb-24">
     <!-- Navbar -->
-    <nav class="fixed w-full z-50 top-0 bg-black/90 backdrop-blur-md border-b border-white/10">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <a href="menu.html" class="p-2 rounded-full hover:bg-white/10 transition">
-                        <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                    </a>
-                    <h1 class="text-xl font-bold text-white">Request Anime</h1>
-                </div>
-                <div id="user-info" class="text-sm text-gray-400"></div>
-            </div>
+    <nav
+      class="fixed w-full z-50 top-0 bg-black/90 backdrop-blur-md border-b border-white/10"
+    >
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <a
+              href="menu.html"
+              class="p-2 rounded-full hover:bg-white/10 transition"
+            >
+              <i data-lucide="arrow-left" class="w-5 h-5"></i>
+            </a>
+            <h1 class="text-xl font-bold text-white">Request Anime</h1>
+          </div>
+          <div id="user-info" class="text-sm text-gray-400"></div>
         </div>
+      </div>
     </nav>
 
     <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-20">
-
-        <!-- Request Form (Authenticated Users Only) -->
-        <section id="request-form-section" class="mb-10 hidden">
-            <div
-                class="bg-gradient-to-br from-violet-600/10 to-cyan-600/10 border border-violet-500/20 rounded-2xl p-6">
-                <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                    <i data-lucide="plus-circle" class="w-5 h-5 text-violet-400"></i>
-                    Submit Request
-                </h2>
-                <form id="request-form" class="space-y-4">
-                    <div>
-                        <label class="text-sm text-gray-400 mb-2 block">Anime Title *</label>
-                        <input type="text" id="anime-title" required
-                            class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-violet-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-400 mb-2 block">Description / Reason</label>
-                        <textarea id="description" maxlength="500" rows="3"
-                            class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-violet-500 focus:outline-none resize-none"
-                            placeholder="Why do you want this anime? (Optional)"></textarea>
-                        <div class="text-xs text-gray-500 mt-1"><span id="char-count">0</span>/500</div>
-                    </div>
-                    <div>
-                        <label class="text-sm text-gray-400 mb-2 block">MyAnimeList ID (Optional)</label>
-                        <input type="text" id="mal-id"
-                            class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-violet-500 focus:outline-none"
-                            placeholder="e.g., 5114">
-                    </div>
-                    <button type="submit"
-                        class="w-full bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-bold py-3 rounded-lg hover:shadow-lg hover:shadow-violet-500/50 transition flex items-center justify-center gap-2">
-                        <i data-lucide="send" class="w-5 h-5"></i>
-                        Submit Request
-                    </button>
-                </form>
+      <!-- Request Form (Authenticated Users Only) -->
+      <section id="request-form-section" class="mb-10 hidden">
+        <div
+          class="bg-gradient-to-br from-violet-600/10 to-cyan-600/10 border border-violet-500/20 rounded-2xl p-6"
+        >
+          <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-5 h-5 text-violet-400"></i>
+            Submit Request
+          </h2>
+          <form id="request-form" class="space-y-4">
+            <div>
+              <label class="text-sm text-gray-400 mb-2 block"
+                >Anime Title *</label
+              >
+              <input
+                type="text"
+                id="anime-title"
+                required
+                class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-violet-500 focus:outline-none"
+              />
             </div>
-        </section>
-
-        <!-- Login prompt for non-authenticated -->
-        <section id="login-prompt" class="mb-10 hidden">
-            <div class="bg-gray-900/50 border border-white/10 rounded-2xl p-6 text-center">
-                <i data-lucide="lock" class="w-12 h-12 text-gray-600 mx-auto mb-4"></i>
-                <p class="text-gray-400 mb-4">Login to submit anime requests</p>
-                <a href="login.html"
-                    class="inline-block bg-violet-600 hover:bg-violet-700 text-white font-bold px-6 py-2 rounded-lg transition">
-                    Login
-                </a>
+            <div>
+              <label class="text-sm text-gray-400 mb-2 block"
+                >Description / Reason</label
+              >
+              <textarea
+                id="description"
+                maxlength="500"
+                rows="3"
+                class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-violet-500 focus:outline-none resize-none"
+                placeholder="Why do you want this anime? (Optional)"
+              ></textarea>
+              <div class="text-xs text-gray-500 mt-1">
+                <span id="char-count">0</span>/500
+              </div>
             </div>
-        </section>
-
-        <!-- Filters & Sort -->
-        <div class="flex items-center justify-between mb-6">
-            <div class="flex gap-2">
-                <select id="filter-status"
-                    class="bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-sm text-white focus:border-violet-500 focus:outline-none">
-                    <option value="">All Status</option>
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                    <option value="completed">Completed</option>
-                </select>
-                <select id="sort-by"
-                    class="bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-sm text-white focus:border-violet-500 focus:outline-none">
-                    <option value="votes">Most Voted</option>
-                    <option value="newest">Newest</option>
-                    <option value="oldest">Oldest</option>
-                </select>
+            <div>
+              <label class="text-sm text-gray-400 mb-2 block"
+                >MyAnimeList ID (Optional)</label
+              >
+              <input
+                type="text"
+                id="mal-id"
+                class="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-violet-500 focus:outline-none"
+                placeholder="e.g., 5114"
+              />
             </div>
-            <div class="text-sm text-gray-500">
-                <span id="total-requests">0</span> requests
-            </div>
+            <button
+              type="submit"
+              class="w-full bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-bold py-3 rounded-lg hover:shadow-lg hover:shadow-violet-500/50 transition flex items-center justify-center gap-2"
+            >
+              <i data-lucide="send" class="w-5 h-5"></i>
+              Submit Request
+            </button>
+          </form>
         </div>
+      </section>
 
-        <!-- Request List -->
-        <div id="request-list" class="space-y-4">
-            <!-- Loading skeleton -->
-            <div id="loading" class="text-center py-10">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500 mx-auto"></div>
-                <p class="text-gray-500 mt-4">Loading requests...</p>
-            </div>
+      <!-- Login prompt for non-authenticated -->
+      <section id="login-prompt" class="mb-10 hidden">
+        <div
+          class="bg-gray-900/50 border border-white/10 rounded-2xl p-6 text-center"
+        >
+          <i
+            data-lucide="lock"
+            class="w-12 h-12 text-gray-600 mx-auto mb-4"
+          ></i>
+          <p class="text-gray-400 mb-4">Login to submit anime requests</p>
+          <a
+            href="login.html"
+            class="inline-block bg-violet-600 hover:bg-violet-700 text-white font-bold px-6 py-2 rounded-lg transition"
+          >
+            Login
+          </a>
         </div>
+      </section>
 
+      <!-- Filters & Sort -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex gap-2">
+          <select
+            id="filter-status"
+            class="bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+          >
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="completed">Completed</option>
+          </select>
+          <select
+            id="sort-by"
+            class="bg-black/50 border border-white/10 rounded-lg px-4 py-2 text-sm text-white focus:border-violet-500 focus:outline-none"
+          >
+            <option value="votes">Most Voted</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+          </select>
+        </div>
+        <div class="text-sm text-gray-500">
+          <span id="total-requests">0</span> requests
+        </div>
+      </div>
+
+      <!-- Request List -->
+      <div id="request-list" class="space-y-4">
+        <!-- Loading skeleton -->
+        <div id="loading" class="text-center py-10">
+          <div
+            class="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500 mx-auto"
+          ></div>
+          <p class="text-gray-500 mt-4">Loading requests...</p>
+        </div>
+      </div>
     </main>
 
     <script>
-        lucide.createIcons();
+      lucide.createIcons();
 
-        const token = localStorage.getItem('token');
-        const user = token ? JSON.parse(localStorage.getItem('user')) : null;
+      const token = localStorage.getItem("token");
+      const user = token ? JSON.parse(localStorage.getItem("user")) : null;
 
-        // Character counter
-        const descriptionEl = document.getElementById('description');
-        const charCountEl = document.getElementById('char-count');
-        descriptionEl?.addEventListener('input', () => {
-            charCountEl.textContent = descriptionEl.value.length;
+      // Character counter
+      const descriptionEl = document.getElementById("description");
+      const charCountEl = document.getElementById("char-count");
+      descriptionEl?.addEventListener("input", () => {
+        charCountEl.textContent = descriptionEl.value.length;
+      });
+
+      // Show/hide request form based on auth
+      if (user) {
+        document
+          .getElementById("request-form-section")
+          .classList.remove("hidden");
+        document.getElementById("user-info").textContent =
+          `Logged in as ${user.username}`;
+      } else {
+        document.getElementById("login-prompt").classList.remove("hidden");
+      }
+
+      // Submit Request
+      document
+        .getElementById("request-form")
+        ?.addEventListener("submit", async (e) => {
+          e.preventDefault();
+
+          const animeTitle = document.getElementById("anime-title").value;
+          const description = document.getElementById("description").value;
+          const malId = document.getElementById("mal-id").value;
+
+          try {
+            const res = await fetch("/api/requests", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ animeTitle, description, malId }),
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+              alert("✅ Request submitted successfully!");
+              document.getElementById("request-form").reset();
+              charCountEl.textContent = "0";
+              loadRequests(); // Reload list
+            } else {
+              alert("❌ " + data.message);
+            }
+          } catch (error) {
+            alert("❌ Failed to submit request");
+            console.error(error);
+          }
         });
 
-        // Show/hide request form based on auth
-        if (user) {
-            document.getElementById('request-form-section').classList.remove('hidden');
-            document.getElementById('user-info').textContent = `Logged in as ${user.username}`;
-        } else {
-            document.getElementById('login-prompt').classList.remove('hidden');
+      // Load Requests
+      async function loadRequests() {
+        const status = document.getElementById("filter-status").value;
+        const sort = document.getElementById("sort-by").value;
+
+        const listEl = document.getElementById("request-list");
+        listEl.innerHTML =
+          '<div id="loading" class="text-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500 mx-auto"></div></div>';
+
+        try {
+          const query = new URLSearchParams();
+          if (status) query.append("status", status);
+          if (sort) query.append("sort", sort);
+
+          const res = await fetch(`/api/requests?${query.toString()}`);
+          const data = await res.json();
+
+          if (res.ok) {
+            displayRequests(data.requests);
+          } else {
+            listEl.innerHTML =
+              '<p class="text-center text-gray-500 py-10">Failed to load requests</p>';
+          }
+        } catch (error) {
+          listEl.innerHTML =
+            '<p class="text-center text-gray-500 py-10">Error loading requests</p>';
+          console.error(error);
+        }
+      }
+
+      // Display Requests
+      function displayRequests(requests) {
+        const listEl = document.getElementById("request-list");
+        document.getElementById("total-requests").textContent = requests.length;
+
+        if (requests.length === 0) {
+          listEl.innerHTML =
+            '<div class="text-center py-10"><i data-lucide="inbox" class="w-12 h-12 text-gray-700 mx-auto mb-4"></i><p class="text-gray-500">No requests yet</p></div>';
+          lucide.createIcons();
+          return;
         }
 
-        // Submit Request
-        document.getElementById('request-form')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
+        listEl.innerHTML = requests
+          .map((request) => {
+            const userVote = getUserVote(request);
+            const voteCount = request.voteCount || 0;
 
-            const animeTitle = document.getElementById('anime-title').value;
-            const description = document.getElementById('description').value;
-            const malId = document.getElementById('mal-id').value;
-
-            try {
-                const res = await fetch('/api/requests', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ animeTitle, description, malId })
-                });
-
-                const data = await res.json();
-
-                if (res.ok) {
-                    alert('✅ Request submitted successfully!');
-                    document.getElementById('request-form').reset();
-                    charCountEl.textContent = '0';
-                    loadRequests(); // Reload list
-                } else {
-                    alert('❌ ' + data.message);
-                }
-            } catch (error) {
-                alert('❌ Failed to submit request');
-                console.error(error);
-            }
-        });
-
-        // Load Requests
-        async function loadRequests() {
-            const status = document.getElementById('filter-status').value;
-            const sort = document.getElementById('sort-by').value;
-
-            const listEl = document.getElementById('request-list');
-            listEl.innerHTML = '<div id="loading" class="text-center py-10"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-violet-500 mx-auto"></div></div>';
-
-            try {
-                const query = new URLSearchParams();
-                if (status) query.append('status', status);
-                if (sort) query.append('sort', sort);
-
-                const res = await fetch(`/api/requests?${query.toString()}`);
-                const data = await res.json();
-
-                if (res.ok) {
-                    displayRequests(data.requests);
-                } else {
-                    listEl.innerHTML = '<p class="text-center text-gray-500 py-10">Failed to load requests</p>';
-                }
-            } catch (error) {
-                listEl.innerHTML = '<p class="text-center text-gray-500 py-10">Error loading requests</p>';
-                console.error(error);
-            }
-        }
-
-        // Display Requests
-        function displayRequests(requests) {
-            const listEl = document.getElementById('request-list');
-            document.getElementById('total-requests').textContent = requests.length;
-
-            if (requests.length === 0) {
-                listEl.innerHTML = '<div class="text-center py-10"><i data-lucide="inbox" class="w-12 h-12 text-gray-700 mx-auto mb-4"></i><p class="text-gray-500">No requests yet</p></div>';
-                lucide.createIcons();
-                return;
-            }
-
-            listEl.innerHTML = requests.map(request => {
-                const userVote = getUserVote(request);
-                const voteCount = request.voteCount || 0;
-
-                return `
+            return `
                     <div class="bg-gray-900/50 border border-white/10 rounded-xl p-6 hover:border-violet-500/30 transition">
                         <div class="flex items-start justify-between mb-3">
                             <div class="flex-1">
                                 <h3 class="text-lg font-bold text-white mb-1">${escapeHtml(request.animeTitle)}</h3>
-                                <p class="text-sm text-gray-400">Requested by ${request.userId?.username || 'Unknown'} • ${formatDate(request.createdAt)}</p>
-                                ${request.description ? `<p class="text-sm text-gray-300 mt-2">${escapeHtml(request.description)}</p>` : ''}
+                                <p class="text-sm text-gray-400">Requested by ${request.userId?.username || "Unknown"} • ${formatDate(request.createdAt)}</p>
+                                ${request.description ? `<p class="text-sm text-gray-300 mt-2">${escapeHtml(request.description)}</p>` : ""}
                             </div>
                             <span class="status-badge status-${request.status}">${request.status}</span>
                         </div>
 
-                        ${request.adminNote ? `<div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-3"><p class="text-xs text-blue-300"><strong>Admin:</strong> ${escapeHtml(request.adminNote)}</p></div>` : ''}
+                        ${request.adminNote ? `<div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 mb-3"><p class="text-xs text-blue-300"><strong>Admin:</strong> ${escapeHtml(request.adminNote)}</p></div>` : ""}
 
                         <div class="flex items-center justify-between pt-3 border-t border-white/5">
                             <div class="flex items-center gap-2">
                                 <button onclick="vote('${request._id}', 'upvote')" 
-                                    class="vote-btn ${userVote === 'upvote' ? 'active text-green-500' : 'inactive text-gray-500'} ${!user ? 'cursor-not-allowed' : ''}" 
-                                    ${!user ? 'disabled' : ''}>
+                                    class="vote-btn ${userVote === "upvote" ? "active text-green-500" : "inactive text-gray-500"} ${!user ? "cursor-not-allowed" : ""}" 
+                                    ${!user ? "disabled" : ""}>
                                     <i data-lucide="arrow-up" class="w-5 h-5"></i>
                                 </button>
                                 <span class="text-white font-bold">${voteCount}</span>
                                 <button onclick="vote('${request._id}', 'downvote')" 
-                                    class="vote-btn ${userVote === 'downvote' ? 'active text-red-500' : 'inactive text-gray-500'} ${!user ? 'cursor-not-allowed' : ''}" 
-                                    ${!user ? 'disabled' : ''}>
+                                    class="vote-btn ${userVote === "downvote" ? "active text-red-500" : "inactive text-gray-500"} ${!user ? "cursor-not-allowed" : ""}" 
+                                    ${!user ? "disabled" : ""}>
                                     <i data-lucide="arrow-down" class="w-5 h-5"></i>
                                 </button>
                             </div>
-                            ${user && request.userId._id === user.id ? `<button onclick="deleteRequest('${request._id}')" class="text-red-500 hover:text-red-400 text-sm">Delete</button>` : ''}
+                            ${user && request.userId._id === user.id ? `<button onclick="deleteRequest('${request._id}')" class="text-red-500 hover:text-red-400 text-sm">Delete</button>` : ""}
                         </div>
                     </div>
                 `;
-            }).join('');
+          })
+          .join("");
 
-            lucide.createIcons();
+        lucide.createIcons();
+      }
+
+      // Get user's vote on a request
+      function getUserVote(request) {
+        if (!user) return null;
+        if (request.upvotes.includes(user.id)) return "upvote";
+        if (request.downvotes.includes(user.id)) return "downvote";
+        return null;
+      }
+
+      // Vote on request
+      async function vote(requestId, voteType) {
+        if (!user) {
+          alert("Please login to vote");
+          return;
         }
 
-        // Get user's vote on a request
-        function getUserVote(request) {
-            if (!user) return null;
-            if (request.upvotes.includes(user.id)) return 'upvote';
-            if (request.downvotes.includes(user.id)) return 'downvote';
-            return null;
+        try {
+          const res = await fetch(`/api/requests/${requestId}/vote`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ voteType }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok) {
+            loadRequests(); // Reload to update votes
+          } else {
+            alert("❌ " + data.message);
+          }
+        } catch (error) {
+          alert("❌ Failed to vote");
+          console.error(error);
         }
+      }
 
-        // Vote on request
-        async function vote(requestId, voteType) {
-            if (!user) {
-                alert('Please login to vote');
-                return;
-            }
+      // Delete request
+      async function deleteRequest(requestId) {
+        if (!confirm("Are you sure you want to delete this request?")) return;
 
-            try {
-                const res = await fetch(`/api/requests/${requestId}/vote`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ voteType })
-                });
+        try {
+          const res = await fetch(`/api/requests/${requestId}`, {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
 
-                const data = await res.json();
+          const data = await res.json();
 
-                if (res.ok) {
-                    loadRequests(); // Reload to update votes
-                } else {
-                    alert('❌ ' + data.message);
-                }
-            } catch (error) {
-                alert('❌ Failed to vote');
-                console.error(error);
-            }
+          if (res.ok) {
+            alert("✅ Request deleted");
+            loadRequests();
+          } else {
+            alert("❌ " + data.message);
+          }
+        } catch (error) {
+          alert("❌ Failed to delete");
+          console.error(error);
         }
+      }
 
-        // Delete request
-        async function deleteRequest(requestId) {
-            if (!confirm('Are you sure you want to delete this request?')) return;
+      // Utility functions
+      function escapeHtml(text) {
+        const div = document.createElement("div");
+        div.textContent = text;
+        return div.innerHTML;
+      }
 
-            try {
-                const res = await fetch(`/api/requests/${requestId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffTime = Math.abs(now - date);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-                const data = await res.json();
+        if (diffDays < 1) return "Today";
+        if (diffDays === 1) return "Yesterday";
+        if (diffDays < 7) return `${diffDays} days ago`;
+        return date.toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        });
+      }
 
-                if (res.ok) {
-                    alert('✅ Request deleted');
-                    loadRequests();
-                } else {
-                    alert('❌ ' + data.message);
-                }
-            } catch (error) {
-                alert('❌ Failed to delete');
-                console.error(error);
-            }
-        }
+      // Event listeners for filters
+      document
+        .getElementById("filter-status")
+        .addEventListener("change", loadRequests);
+      document
+        .getElementById("sort-by")
+        .addEventListener("change", loadRequests);
 
-        // Utility functions
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffTime = Math.abs(now - date);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-            if (diffDays < 1) return 'Today';
-            if (diffDays === 1) return 'Yesterday';
-            if (diffDays < 7) return `${diffDays} days ago`;
-            return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-        }
-
-        // Event listeners for filters
-        document.getElementById('filter-status').addEventListener('change', loadRequests);
-        document.getElementById('sort-by').addEventListener('change', loadRequests);
-
-        // Initial load
-        loadRequests();
+      // Initial load
+      loadRequests();
     </script>
-</body>
-
+  </body>
 </html>

@@ -1,95 +1,97 @@
 /* Reusable Skeleton Loader Styles */
 
 .skeleton-base {
-    background: linear-gradient(90deg,
-            rgba(255, 255, 255, 0.03) 0%,
-            rgba(255, 255, 255, 0.08) 50%,
-            rgba(255, 255, 255, 0.03) 100%);
-    background-size: 200% 100%;
-    animation: skeleton-loading 1.5s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
 }
 
 @keyframes skeleton-loading {
-    0% {
-        background-position: 200% 0;
-    }
+  0% {
+    background-position: 200% 0;
+  }
 
-    100% {
-        background-position: -200% 0;
-    }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Anime Card Skeleton */
 .skeleton-anime-card {
-    @apply skeleton-base rounded-xl;
-    aspect-ratio: 2/3;
+  @apply skeleton-base rounded-xl;
+  aspect-ratio: 2/3;
 }
 
 /* Text Skeleton */
 .skeleton-text {
-    @apply skeleton-base rounded h-4;
+  @apply skeleton-base rounded h-4;
 }
 
 .skeleton-text-sm {
-    @apply skeleton-base rounded h-3;
+  @apply skeleton-base rounded h-3;
 }
 
 .skeleton-text-lg {
-    @apply skeleton-base rounded h-6;
+  @apply skeleton-base rounded h-6;
 }
 
 /* Circle Skeleton (for avatars) */
 .skeleton-circle {
-    @apply skeleton-base rounded-full;
+  @apply skeleton-base rounded-full;
 }
 
 /* Button Skeleton */
 .skeleton-button {
-    @apply skeleton-base rounded-lg h-10;
+  @apply skeleton-base rounded-lg h-10;
 }
 
 /* Grid of Skeleton Cards */
 .skeleton-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
 }
 
 @media (min-width: 768px) {
-    .skeleton-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
+  .skeleton-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 @media (min-width: 1024px) {
-    .skeleton-grid {
-        grid-template-columns: repeat(5, 1fr);
-    }
+  .skeleton-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
 
 /* Specific Skeleton Components */
 
 /* Badge Skeleton */
 .skeleton-badge {
-    @apply skeleton-base rounded-xl p-6;
-    min-height: 120px;
+  @apply skeleton-base rounded-xl p-6;
+  min-height: 120px;
 }
 
 /* Profile Stats Skeleton */
 .skeleton-stat-card {
-    @apply skeleton-base rounded-xl;
-    height: 100px;
+  @apply skeleton-base rounded-xl;
+  height: 100px;
 }
 
 /* Trending Carousel Item */
 .skeleton-carousel-item {
-    @apply skeleton-base rounded-2xl;
-    aspect-ratio: 16/9;
-    min-width: 280px;
+  @apply skeleton-base rounded-2xl;
+  aspect-ratio: 16/9;
+  min-width: 280px;
 }
 
 /* Episode List Item */
 .skeleton-episode {
-    @apply skeleton-base rounded-lg;
-    height: 80px;
+  @apply skeleton-base rounded-lg;
+  height: 80px;
 }
