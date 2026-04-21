@@ -16,22 +16,22 @@
 
 ---
 
-## 📖 Tentang Projek
+##  Tentang Projek
 
 **Annimverse** adalah sebuah platform berbasis web (*Web App*) komprehensif yang dikhususkan bagi penggemar anime untuk menjelajahi, menonton (streaming), sekaligus mendapatkan rekomendasi anime terkini. Dirancang menggunakan arsitektur Node.js dan Express pada sisi *backend*, serta menggunakan Vanilla JS bertenaga Tailwind CSS pada sisi antarmukanya.
 
 Platform ini hadir dengan berbagai fitur layaknya situs streaming kelas atas seperti sistem otentikasi pengguna, perlindungan keamanan API, sistem interaksi sosial (like/komentar/request), dan kemampuan *deploy* serverless ke Vercel!
 
-## ✨ Fitur Unggulan
+##  Fitur Unggulan
 
-- 🔐 **Sistem Autentikasi Solid**: Fitur *Login*, *Register*, sistem keamanan dengan JWT (JSON Web Tokens), hingga fitur *Lupa Password* yang terintegrasi dengan Email (SMTP).
-- 🎬 **Mirror Streaming System**: Menyediakan pengalaman menonton anime yang stabil menggunakan pemetaan *endpoint* streaming.
-- 💡 **Sistem Rekomendasi Pintar**: Suguhan katalog anime khusus berdasarkan algoritma rekomendasi tersendiri.
-- 👥 **Interaksi & Profil Pengguna**: Sistem kustomisasi profil, level, *EXP* / *Streak* data untuk pengguna setia.
-- 🛡️ **Tingkat Keamanan Tinggi**: Telah dilengkapi dengan *Rate Limiting*, Helmet (Security Headers), dan *Cross-Origin Resource Sharing* (CORS).
-- 🛠️ **Admin Dashboard**: Endpoint spesifik peruntukan admin untuk mengelola manajemen katalog anime dan mengatur permintaan (*requests*) tontonan dari *user*. 
+-  **Sistem Autentikasi Solid**: Fitur *Login*, *Register*, sistem keamanan dengan JWT (JSON Web Tokens), hingga fitur *Lupa Password* yang terintegrasi dengan Email (SMTP).
+-  **Mirror Streaming System**: Menyediakan pengalaman menonton anime yang stabil menggunakan pemetaan *endpoint* streaming.
+-  **Sistem Rekomendasi Pintar**: Suguhan katalog anime khusus berdasarkan algoritma rekomendasi tersendiri.
+-  **Interaksi & Profil Pengguna**: Sistem kustomisasi profil, level, *EXP* / *Streak* data untuk pengguna setia.
+-  **Tingkat Keamanan Tinggi**: Telah dilengkapi dengan *Rate Limiting*, Helmet (Security Headers), dan *Cross-Origin Resource Sharing* (CORS).
+-  **Admin Dashboard**: Endpoint spesifik peruntukan admin untuk mengelola manajemen katalog anime dan mengatur permintaan (*requests*) tontonan dari *user*. 
 
-## 🛠️ Tech Stack (Teknologi Utama)
+##  Tech Stack (Teknologi Utama)
 
 **Frontend:**
 - HTML5, CSS3, & Vanilla JavaScript
@@ -44,7 +44,7 @@ Platform ini hadir dengan berbagai fitur layaknya situs streaming kelas atas sep
 - [Bcryptjs](https://www.npmjs.com/package/bcryptjs) & [JWT](https://jwt.io/) (Kriptografi Kredensial dan *Token*)
 - [Nodemailer](https://nodemailer.com/about/) (Sistem Reset Kata Sandi Otomatis)
 
-## 📂 Struktur Direktori
+##  Struktur Direktori
 
 Diorganisasi menggunakan pola **MVC (Model-View-Controller)** sederhana:
 ```text
@@ -59,11 +59,11 @@ annimverse/
 ├── services/           # Modul eksternal seperti Email Service SMTP
 ├── utils/              # Fungsi Bantuan Tambahan
 ├── vercel.json         # Konfigurasi Pendelegasian Deployment (Serverless)
-├── server.js           # ✅ Titik Masuk (Entry Point Utama Aplikasi)
+├── server.js           # Titik Masuk (Entry Point Utama Aplikasi)
 └── package.json        # Manifest Dependency Node.js
 ```
 
-## 🚀 Panduan Instalasi (Development)
+##  Panduan Instalasi (Development)
 
 Tertarik berkontribusi atau menjalankan ini secara lokal (*locahost*)? Ikuti tahap-tahap simpel berikut:
 
@@ -94,9 +94,9 @@ Tertarik berkontribusi atau menjalankan ini secara lokal (*locahost*)? Ikuti tah
    ```bash
    npm run dev
    ```
-   > Server akan otomatis berjalan di `http://localhost:4000` 🥳
+   > Server akan otomatis berjalan di `http://localhost:4000` 
 
-## ☁️ Deployment (Publikasi ke Vercel)
+##  Deployment (Publikasi ke Vercel)
 
 Proyek ini sudah dikalibrasi 100% untuk dieksekusi di ranah [Vercel](https://vercel.com/) sebagai lingkungan *Serverless Functions*. 
 
@@ -104,9 +104,9 @@ Proyek ini sudah dikalibrasi 100% untuk dieksekusi di ranah [Vercel](https://ver
 * Sangat Penting: **JANGAN LUPA menambahkan seluruh isi Environment Variables** (`.env`) ke tab pengaturan *Settings* -> **Environment Variables** milik Vercel. Tanpa ini, backend akan membeku (Error 500).
 * Pastikan pula *Network Access* pada MongoDB Atlas Anda diatur ke *Allow Access from Anywhere* (`0.0.0.0/0`) karena API Vercel bergerak dari IP dinamis!
 
-## 📜 Lisensi Penggunaan
+##  Lisensi Penggunaan
 
-Didistribusikan di bawah lisensi ISC. Bebas dikerjakan ulang dan dipublikasikan sesuai kebutuhan standar kreativitas personal maupun edukasional.
+Didistribusikan oleh pengguna dan tidak memiliki lisensi resmi. Bebas dikerjakan ulang dan dipublikasikan sesuai kebutuhan standar kreativitas personal maupun edukasional.
 
 ---
 > Digaungkan dengan penuh dedikasi oleh **[Yann-GameDev](https://github.com/yann-gamedev)** ⚡
