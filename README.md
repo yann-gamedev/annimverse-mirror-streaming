@@ -24,7 +24,7 @@ Platform ini hadir dengan berbagai fitur layaknya situs streaming kelas atas sep
 
 ##  Fitur Unggulan
 
--  **Sistem Autentikasi Solid**: Fitur *Login*, *Register*, sistem keamanan dengan JWT (JSON Web Tokens), serta opsi akses tertutup (*Home Server Mode*).
+-  **Sistem Autentikasi Solid**: Fitur *Login*, *Register*, sistem keamanan dengan JWT (JSON Web Tokens), fitur *Lupa Password* terintegrasi Email (SMTP), serta opsi akses tertutup (*Home Server Mode*).
 -  **Penyimpanan Media Fleksibel (Dual-Mode)**: Mendukung *streaming* langsung dari *Cloud* (Google Drive) maupun secara lokal dari Server Hardisk (*Local Storage*), terkelola fleksibel lewat konfigurasi environment.
 -  **Mirror Streaming System**: Menyediakan pengalaman menonton anime yang stabil menggunakan pemetaan *endpoint* streaming.
 -  **Sistem Rekomendasi Pintar**: Suguhan katalog anime khusus berdasarkan algoritma rekomendasi tersendiri.
@@ -111,7 +111,7 @@ Proyek ini sudah dikalibrasi 100% untuk dieksekusi di ranah [Vercel](https://ver
 
 ##  Lisensi Penggunaan
 
-Didistribusikan tanpa lisensi. Bebas dikerjakan ulang dan dipublikasikan sesuai kebutuhan standar kreativitas personal maupun edukasional.
+Didistribusikan oleh pengguna dan tidak memiliki lisensi resmi. Bebas dikerjakan ulang dan dipublikasikan sesuai kebutuhan standar kreativitas personal maupun edukasional.
 
 ---
 > Digaungkan dengan penuh dedikasi oleh **[Yann-GameDev](https://github.com/yann-gamedev)** 
