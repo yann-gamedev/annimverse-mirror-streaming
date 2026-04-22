@@ -99,7 +99,7 @@ Tertarik berkontribusi atau menjalankan ini secara lokal (*locahost*)? Ikuti tah
    ```bash
    npm run dev
    ```
-   > Server akan otomatis berjalan di `http://localhost:4000` 🥳
+   > Server akan otomatis berjalan di `http://localhost:4000` 
 
 ##  Deployment (Publikasi ke Vercel)
 
@@ -114,4 +114,4 @@ Proyek ini sudah dikalibrasi 100% untuk dieksekusi di ranah [Vercel](https://ver
 Didistribusikan tanpa lisensi. Bebas dikerjakan ulang dan dipublikasikan sesuai kebutuhan standar kreativitas personal maupun edukasional.
 
 ---
-> Digaungkan dengan penuh dedikasi oleh **[Yann-GameDev](https://github.com/yann-gamedev)** ⚡
+> Digaungkan dengan penuh dedikasi oleh **[Yann-GameDev](https://github.com/yann-gamedev)** 
