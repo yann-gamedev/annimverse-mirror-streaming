@@ -9,7 +9,8 @@ const episodeSchema = new mongoose.Schema(
     },
     episodeNumber: { type: Number, required: true },
     title: { type: String, default: "Episode Baru" },
-    gdriveId: { type: String, required: true },
+    gdriveId: { type: String, required: false }, // Bisa kosongan jika main mode lokal
+    localPath: { type: String, required: false }, // [BARU] Path untuk video lokal opsi
     duration: { type: Number, default: 24 },
     views: { type: Number, default: 0 },
 

@@ -376,9 +376,10 @@
 
       // 1. Ambil data User dari LocalStorage (Logic Sapaan)
       const userData = localStorage.getItem("user");
+      let user = null;
 
       if (userData) {
-        const user = JSON.parse(userData);
+        user = JSON.parse(userData);
 
         // Update Nama
         const nameEl = document.getElementById("greetingName");
@@ -400,16 +401,16 @@
       async function loadUserStats(userId) {
         try {
           const response = await fetch(`/api/users/${userId}`);
-          const user = await response.json();
+          const userObj = await response.json();
 
           document.getElementById("user-level-display").innerText =
-            `Level ${user.stats?.level || 1}`;
+            `Level ${userObj.stats?.level || 1}`;
           document.getElementById("user-xp-display").innerText =
-            user.stats?.xp || 0;
+            userObj.stats?.xp || 0;
           document.getElementById("user-streak-display").innerText =
-            user.stats?.currentStreak || 0;
+            userObj.stats?.currentStreak || 0;
           document.getElementById("user-watchtime-display").innerText =
-            user.stats?.totalWatchTime || 0;
+            userObj.stats?.totalWatchTime || 0;
 
           lucide.createIcons();
         } catch (error) {
@@ -424,6 +425,8 @@
           const CACHE_KEY = `rec_cache_${user ? user.id : "guest"}`;
           const cachedData = localStorage.getItem(CACHE_KEY);
           const CACHE_DURATION = 60 * 60 * 1000; // 1 Hour
+          
+          const token = localStorage.getItem("token");
 
           if (cachedData) {
             const parsed = JSON.parse(cachedData);
@@ -432,6 +435,8 @@
               return;
             }
           }
+
+          let endpoint, response;
 
           if (token) {
             endpoint = "/api/recommendations";

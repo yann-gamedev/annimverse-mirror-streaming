@@ -28,13 +28,25 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "", // Bisa kosong atau link default
     },
-    // Statistik User (XP, Level, Streak)
+    bio: {
+      type: String,
+      default: "",
+    },
+    preferences: {
+      theme: { type: String, enum: ["dark", "light"], default: "dark" },
+      autoplay: { type: Boolean, default: true },
+    },
+    favorites: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Anime",
+      },
+    ],
+    // Statistik User & Gamifikasi (Disederhanakan)
     stats: {
       level: { type: Number, default: 1 },
       xp: { type: Number, default: 0 },
       totalWatchTime: { type: Number, default: 0 }, // menit
-      currentStreak: { type: Number, default: 0 },
-      lastWatchDate: { type: Date, default: null },
     },
     // Badges earned by user
     badges: [

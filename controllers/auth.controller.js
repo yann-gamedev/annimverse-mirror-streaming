@@ -10,6 +10,11 @@ const {
 // 1. REGISTRASI USER BARU
 exports.register = async (req, res) => {
   try {
+    // Pengecekan Env ALLOW_PUBLIC_REGISTRATION (Opsi Home Server)
+    if (process.env.ALLOW_PUBLIC_REGISTRATION === "false") {
+      return res.status(403).json({ message: "Pendaftaran publik saat ini ditutup." });
+    }
+
     const { username, email, password } = req.body;
 
     // Validasi input

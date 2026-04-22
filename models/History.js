@@ -22,6 +22,10 @@ const historySchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    stoppedAt: {
+      type: Number, // dalam satuan detik
+      default: 0,
+    },
   },
   { timestamps: true },
 );

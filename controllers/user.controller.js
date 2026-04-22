@@ -4,7 +4,9 @@ const bcrypt = require("bcryptjs");
 // 1. AMBIL DATA PROFIL
 exports.getUserProfile = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).select("-password");
+    const user = await User.findById(req.params.id)
+      .select("-password")
+      .populate("favorites", "title coverImage rating year");
     if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
     res.json(user);
   } catch (error) {
@@ -35,14 +37,22 @@ exports.uploadAvatar = async (req, res) => {
 // 3. [BARU] UPDATE PROFIL (Nama, Email, Password)
 exports.updateProfile = async (req, res) => {
   try {
-    const { username, email, password, newPassword } = req.body;
+    const { username, email, password, newPassword, bio, preferences, favorites } = req.body;
     const user = await User.findById(req.params.id);
 
     if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
 
-    // Update Info Dasar
+    // Update Info Dasar & Personalisasi
     if (username) user.username = username;
     if (email) user.email = email;
+    if (bio !== undefined) user.bio = bio;
+    if (preferences) {
+      if (preferences.theme) user.preferences.theme = preferences.theme;
+      if (preferences.autoplay !== undefined) user.preferences.autoplay = preferences.autoplay;
+    }
+    if (favorites && Array.isArray(favorites)) {
+      user.favorites = favorites;
+    }
 
     // Update Password (Jika ada request ganti password)
     if (password && newPassword) {
