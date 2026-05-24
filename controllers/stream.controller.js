@@ -54,7 +54,8 @@ exports.streamVideo = async (req, res) => {
       if (range) {
         const parts = range.replace(/bytes=/, "").split("-");
         const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        end = Math.min(end, fileSize - 1);
         const chunksize = end - start + 1;
 
         const head = {
@@ -65,14 +66,18 @@ exports.streamVideo = async (req, res) => {
         };
 
         res.writeHead(206, head);
-        fs.createReadStream(videoPath, { start, end }).pipe(res);
+        const stream = fs.createReadStream(videoPath, { start, end });
+        res.on("close", () => stream.destroy());
+        stream.pipe(res);
       } else {
         const head = {
           "Content-Length": fileSize,
           "Content-Type": "video/mp4",
         };
         res.writeHead(200, head);
-        fs.createReadStream(videoPath).pipe(res);
+        const stream = fs.createReadStream(videoPath);
+        res.on("close", () => stream.destroy());
+        stream.pipe(res);
       }
     } else {
       // ===== STREAM GOOGLE DRIVE =====
@@ -93,39 +98,34 @@ exports.streamVideo = async (req, res) => {
       const range = req.headers.range;
 
       // 2. Streaming dengan Range (Chunking)
+      const options = { responseType: "stream" };
       if (range) {
-        const parts = range.replace(/bytes=/, "").split("-");
-        const start = parseInt(parts[0], 10);
-        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-        const chunksize = end - start + 1;
-
-        const head = {
-          "Content-Range": `bytes ${start}-${end}/${fileSize}`,
-          "Accept-Ranges": "bytes",
-          "Content-Length": chunksize,
-          "Content-Type": "video/mp4",
-        };
-
-        res.writeHead(206, head);
-
-        const response = await drive.files.get(
-          { fileId: fileId, alt: "media" },
-          { responseType: "stream", headers: { Range: `bytes=${start}-${end}` } },
-        );
-
-        response.data.pipe(res);
-      } else {
-        const head = {
-          "Content-Length": fileSize,
-          "Content-Type": "video/mp4",
-        };
-        res.writeHead(200, head);
-        const response = await drive.files.get(
-          { fileId: fileId, alt: "media" },
-          { responseType: "stream" },
-        );
-        response.data.pipe(res);
+        options.headers = { Range: range };
       }
+
+      const response = await drive.files.get(
+        { fileId: fileId, alt: "media" },
+        options
+      );
+
+      const status = response.status || (range ? 206 : 200);
+      const headers = {
+        "Content-Type": "video/mp4",
+        "Accept-Ranges": "bytes",
+      };
+      
+      if (response.headers["content-length"]) headers["Content-Length"] = response.headers["content-length"];
+      if (response.headers["content-range"]) headers["Content-Range"] = response.headers["content-range"];
+
+      res.writeHead(status, headers);
+      
+      res.on("close", () => {
+        if (response.data && typeof response.data.destroy === "function") {
+          response.data.destroy();
+        }
+      });
+
+      response.data.pipe(res);
     }
   } catch (error) {
     console.error("Stream Error:", error.message);
