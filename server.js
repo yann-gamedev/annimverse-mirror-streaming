@@ -79,7 +79,7 @@ app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/anime", generalLimiter, animeRoutes);
 app.use("/api/users", generalLimiter, userRoutes);
 app.use("/api/interact", generalLimiter, interactionRoutes);
-app.use("/api/stream", generalLimiter, streamRoutes);
+app.use("/api/stream", streamRoutes); // No rate limit — video range requests are too frequent
 app.use("/api/admin", generalLimiter, adminRoutes);
 app.use("/api/requests", generalLimiter, requestRoutes);
 app.use("/api/recommendations", generalLimiter, recommendationRoutes);

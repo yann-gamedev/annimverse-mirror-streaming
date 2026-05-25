@@ -4,26 +4,29 @@ const path = require("path");
 const fs = require("fs");
 
 // Setup Auth Google
-// Pastikan service-account.json ada di folder root project (sejajar server.js)
 const KEY_FILE_PATH = path.join(__dirname, "../service-account.json");
 const SCOPES = ["https://www.googleapis.com/auth/drive.readonly"];
 
 let authOptions = { scopes: SCOPES };
+let authInitError = null;
 
 if (process.env.GOOGLE_CREDENTIALS) {
-  // Apabila dijalankan di Vercel, kita akan membaca JSON secara utuh dari Environtment Variables
+  // Vercel deployment: read credentials from env var
   try {
     authOptions.credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
   } catch (err) {
-    console.error("Gagal melakukan parse GOOGLE_CREDENTIALS dari ENV");
+    authInitError = "GOOGLE_CREDENTIALS env var contains invalid JSON";
+    console.error("❌ [Stream] " + authInitError);
   }
-} else {
-  // Jika lokal / dev mode, gunakan file json standard
+} else if (fs.existsSync(KEY_FILE_PATH)) {
+  // Local dev: use service-account.json file
   authOptions.keyFile = KEY_FILE_PATH;
+} else {
+  authInitError = "No Google credentials found. Set GOOGLE_CREDENTIALS env var or place service-account.json in project root.";
+  console.error("❌ [Stream] " + authInitError);
 }
 
 const auth = new google.auth.GoogleAuth(authOptions);
-
 const drive = google.drive({ version: "v3", auth });
 
 exports.streamVideo = async (req, res) => {
@@ -41,7 +44,6 @@ exports.streamVideo = async (req, res) => {
         return res.status(404).send("File lokal video belum diatur.");
       }
       
-      // Ambil path aman yang relatif terhadap folder utama jika tidak absolut
       const videoPath = path.resolve(episode.localPath);
       if (!fs.existsSync(videoPath)) {
         return res.status(404).send("File fisik video tidak ditemukan di server lokal.");
@@ -67,6 +69,11 @@ exports.streamVideo = async (req, res) => {
 
         res.writeHead(206, head);
         const stream = fs.createReadStream(videoPath, { start, end });
+        stream.on("error", (err) => {
+          console.error("❌ [Stream] Local file read error:", err.message);
+          if (!res.headersSent) res.status(500).send("Error membaca file video.");
+          else stream.destroy();
+        });
         res.on("close", () => stream.destroy());
         stream.pipe(res);
       } else {
@@ -76,29 +83,42 @@ exports.streamVideo = async (req, res) => {
         };
         res.writeHead(200, head);
         const stream = fs.createReadStream(videoPath);
+        stream.on("error", (err) => {
+          console.error("❌ [Stream] Local file read error:", err.message);
+          if (!res.headersSent) res.status(500).send("Error membaca file video.");
+          else stream.destroy();
+        });
         res.on("close", () => stream.destroy());
         stream.pipe(res);
       }
     } else {
       // ===== STREAM GOOGLE DRIVE =====
-      // Cek apakah ID-nya masih dummy?
-      if (!episode.gdriveId || episode.gdriveId === "dummy_id") {
+      
+      // Check if auth was initialized properly
+      if (authInitError) {
+        console.error("❌ [Stream] Auth not configured:", authInitError);
+        return res.status(500).send("Server belum dikonfigurasi untuk streaming cloud. Cek GOOGLE_CREDENTIALS.");
+      }
+
+      if (!episode.gdriveId || episode.gdriveId === "dummy_id" || episode.gdriveId.startsWith("dummy")) {
         return res.status(404).send("Video belum tersedia di cloud (Invalid ID)");
       }
 
       const fileId = episode.gdriveId;
 
-      // 1. Ambil Info File dari Google
-      const fileMetadata = await drive.files.get({
-        fileId: fileId,
-        fields: "size, mimeType",
-      });
+      // Validate auth is still working before streaming
+      try {
+        await auth.getClient();
+      } catch (authErr) {
+        console.error("❌ [Stream] Google Auth failed:", authErr.message);
+        return res.status(500).send(
+          "Google Drive authentication gagal. Service account key mungkin expired atau revoked."
+        );
+      }
 
-      const fileSize = parseInt(fileMetadata.data.size);
+      // Stream directly from Google Drive (no separate metadata call needed)
       const range = req.headers.range;
-
-      // 2. Streaming dengan Range (Chunking)
-      const options = { responseType: "stream" };
+      const options = { responseType: "stream", timeout: 30000 };
       if (range) {
         options.headers = { Range: range };
       }
@@ -110,7 +130,7 @@ exports.streamVideo = async (req, res) => {
 
       const status = response.status || (range ? 206 : 200);
       const headers = {
-        "Content-Type": "video/mp4",
+        "Content-Type": response.headers["content-type"] || "video/mp4",
         "Accept-Ranges": "bytes",
       };
       
@@ -125,11 +145,47 @@ exports.streamVideo = async (req, res) => {
         }
       });
 
+      response.data.on("error", (err) => {
+        console.error("❌ [Stream] Google Drive stream error mid-transfer:", err.message);
+        if (response.data && typeof response.data.destroy === "function") {
+          response.data.destroy();
+        }
+      });
+
       response.data.pipe(res);
     }
   } catch (error) {
-    console.error("Stream Error:", error.message);
-    // Jika errornya "File not found", berarti ID di database salah
-    if (!res.headersSent) res.status(500).send("Gagal memutar video.");
+    console.error("❌ [Stream] Error:", error.message);
+    
+    if (res.headersSent) return;
+
+    // Provide specific error messages based on Google API error codes
+    const status = error.code || error.status || 500;
+    
+    if (status === 404) {
+      return res.status(404).send(
+        "File tidak ditemukan di Google Drive. gdriveId mungkin salah atau file sudah dihapus."
+      );
+    }
+    
+    if (status === 403) {
+      return res.status(403).send(
+        "Akses ditolak oleh Google Drive. Pastikan file sudah di-share ke service account: stream-bot@annimverse-storage.iam.gserviceaccount.com"
+      );
+    }
+
+    if (status === 429) {
+      return res.status(429).send(
+        "Google Drive API quota exceeded. Coba lagi nanti."
+      );
+    }
+
+    if (error.message && error.message.includes("invalid_grant")) {
+      return res.status(500).send(
+        "Google service account key sudah expired/revoked. Perlu generate key baru dari Google Cloud Console."
+      );
+    }
+
+    res.status(500).send("Gagal memutar video: " + error.message);
   }
 };

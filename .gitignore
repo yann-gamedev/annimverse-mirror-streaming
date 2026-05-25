@@ -19,8 +19,12 @@ dist
 .env.test.local
 .env.production.local
 
-# Sensitive credentials
+# Sensitive credentials — NEVER push these to GitHub
 service-account.json
+*-storage-*.json
+*-credentials*.json
+*.p12
+*.pem
 
 # Logs
 npm-debug.log*
