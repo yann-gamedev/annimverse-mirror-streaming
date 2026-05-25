@@ -116,43 +116,86 @@ exports.streamVideo = async (req, res) => {
         );
       }
 
-      // Stream directly from Google Drive (no separate metadata call needed)
+      // Stream directly from Google Drive
       const range = req.headers.range;
-      const options = { responseType: "stream", timeout: 30000 };
+      
+      // 1. Get file metadata for size
+      const metaResponse = await drive.files.get({
+        fileId: fileId,
+        fields: "size, mimeType"
+      });
+      
+      const fileSize = parseInt(metaResponse.data.size, 10);
+      const mimeType = metaResponse.data.mimeType || "video/mp4";
+
       if (range) {
-        options.headers = { Range: range };
+        const parts = range.replace(/bytes=/, "").split("-");
+        const start = parseInt(parts[0], 10);
+        let end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        end = Math.min(end, fileSize - 1);
+        const chunksize = end - start + 1;
+
+        const head = {
+          "Content-Range": `bytes ${start}-${end}/${fileSize}`,
+          "Accept-Ranges": "bytes",
+          "Content-Length": chunksize,
+          "Content-Type": mimeType,
+        };
+
+        res.writeHead(206, head);
+
+        const options = {
+          responseType: "stream",
+          headers: { Range: `bytes=${start}-${end}` }
+        };
+
+        const response = await drive.files.get(
+          { fileId: fileId, alt: "media" },
+          options
+        );
+
+        response.data.on("error", (err) => {
+          console.error("❌ [Stream] Google Drive stream error mid-transfer:", err.message);
+          if (response.data && typeof response.data.destroy === "function") {
+            response.data.destroy();
+          }
+        });
+
+        res.on("close", () => {
+          if (response.data && typeof response.data.destroy === "function") {
+            response.data.destroy();
+          }
+        });
+
+        response.data.pipe(res);
+      } else {
+        const head = {
+          "Content-Length": fileSize,
+          "Content-Type": mimeType,
+        };
+        res.writeHead(200, head);
+
+        const options = { responseType: "stream" };
+        const response = await drive.files.get(
+          { fileId: fileId, alt: "media" },
+          options
+        );
+
+        response.data.on("error", (err) => {
+          console.error("❌ [Stream] Google Drive stream error mid-transfer:", err.message);
+          if (response.data && typeof response.data.destroy === "function") {
+            response.data.destroy();
+          }
+        });
+
+        res.on("close", () => {
+          if (response.data && typeof response.data.destroy === "function") {
+            response.data.destroy();
+          }
+        });
+
+        response.data.pipe(res);
       }
-
-      const response = await drive.files.get(
-        { fileId: fileId, alt: "media" },
-        options
-      );
-
-      const status = response.status || (range ? 206 : 200);
-      const headers = {
-        "Content-Type": response.headers["content-type"] || "video/mp4",
-        "Accept-Ranges": "bytes",
-      };
-      
-      if (response.headers["content-length"]) headers["Content-Length"] = response.headers["content-length"];
-      if (response.headers["content-range"]) headers["Content-Range"] = response.headers["content-range"];
-
-      res.writeHead(status, headers);
-      
-      res.on("close", () => {
-        if (response.data && typeof response.data.destroy === "function") {
-          response.data.destroy();
-        }
-      });
-
-      response.data.on("error", (err) => {
-        console.error("❌ [Stream] Google Drive stream error mid-transfer:", err.message);
-        if (response.data && typeof response.data.destroy === "function") {
-          response.data.destroy();
-        }
-      });
-
-      response.data.pipe(res);
     }
   } catch (error) {
     console.error("❌ [Stream] Error:", error.message);
