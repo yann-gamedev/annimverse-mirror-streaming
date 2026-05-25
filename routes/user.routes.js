@@ -17,4 +17,8 @@ router.post(
 // [BARU] PUT Update Profile (Wajib Login/Protect)
 router.put("/:id", protect, userController.updateProfile);
 
+// [BARU] GET User Badges
+const badgeController = require("../controllers/badge.controller");
+router.get("/:id/badges", badgeController.getUserBadges);
+
 module.exports = router;

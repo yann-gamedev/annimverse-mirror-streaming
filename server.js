@@ -18,6 +18,7 @@ const streamRoutes = require("./routes/stream.routes");
 const adminRoutes = require("./routes/admin.routes");
 const requestRoutes = require("./routes/request.routes");
 const recommendationRoutes = require("./routes/recommendation.routes");
+const badgeRoutes = require("./routes/badge.routes");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -63,7 +64,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 // --- STATIC FILES ---
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "client", "dist")));
 app.use("/storage", express.static(path.join(__dirname, "storage")));
 
 // --- STATUS ENDPOINT (for health check and offline detection) ---
@@ -83,10 +84,11 @@ app.use("/api/stream", streamRoutes); // No rate limit — video range requests 
 app.use("/api/admin", generalLimiter, adminRoutes);
 app.use("/api/requests", generalLimiter, requestRoutes);
 app.use("/api/recommendations", generalLimiter, recommendationRoutes);
+app.use("/api/badges", generalLimiter, badgeRoutes);
 
 // --- FALLBACK ---
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
 
 // --- GLOBAL ERROR HANDLER ---
